@@ -1,0 +1,44 @@
+[
+  {
+    "url": "/images/directors/1.jpg",
+    "title": "Chairperson",
+    "id": 1,
+    "description": "A MBA graduate With 20 years of banking experince. A MBA graduate With 20 years of banking experince.A MBA graduate With 20 years of banking experince. A MBA graduate With 20 years of banking experince"
+  },
+  {
+    "url": "/images/directors/2.jpg",
+    "title": "Director",
+    "id": 2,
+    "description": "A MBA graduate With 20 years of banking experince"
+  },
+  {
+    "url": "/images/directors/3.jpg",
+    "title": "Director",
+    "id": 3,
+    "description": "A MBA graduate With 20 years of banking experince"
+  },
+  {
+    "url": "/images/directors/4.jpg",
+    "title": "Director",
+    "id": 4,
+    "description": "A MBA graduate With 20 years of banking experince"
+  },
+  {
+    "url": "/imgs/abstract/5.jpg",
+    "title": "Director",
+    "id": 5,
+    "description": "A MBA graduate With 20 years of banking experince"
+  },
+  {
+    "url": "/imgs/abstract/6.jpg",
+    "title": "Director",
+    "id": 6,
+    "description": "A MBA graduate With 20 years of banking experince"
+  },
+  {
+    "url": "/imgs/abstract/7.jpg",
+    "title": "CEO",
+    "id": 7,
+    "description": "A MBA graduate With 20 years of banking experince"
+  }
+]

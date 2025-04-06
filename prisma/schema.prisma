@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+
+model User {
+  id  Int @id @default(autoincrement())
+  name  String
+  username  String @unique
+  password   String
+  email String @unique
+  requirePasswordChange  Boolean @default(true)
+  role   UserRole @default(USER)
+}
+
+
+model ShareUploadHistory{
+  id Int @id @default(autoincrement())
+  ownershipType OwnershipType
+  ownershipDate String
+  remarks String
+  shareHistory ShareHistory[]
+}
+enum DividenUploadType {
+  Dividend_Allocation
+  Dividend_Payment
+}
+
+model DividendUploadHistory{
+  id Int @id @default(autoincrement())
+  dividendUploadType DividenUploadType
+  transactionDateRange String
+  remarks String
+  dividend Dividend[]
+}
+model Dividend {
+  id                Int         @id @default(autoincrement())
+  amount           Float
+  transactionDate   String
+  shareholderId Int
+  shareholder       Shareholder @relation(fields: [shareholderId], references: [id])
+  sendingBankName String?
+  sendingBankAccount String?
+  receivingBankName String?
+  receivingBankAccount String?
+  dividendUploadHistoryId Int?
+  dividendUploadHistory DividendUploadHistory? @relation(fields: [dividendUploadHistoryId], references: [id])
+  remarks String
+  entryDate DateTime @default(now())
+}
+
+enum OwnershipType {
+  Promoter_Share_Purchase
+  Ipo_Purchase
+  Purchase_Sale
+  Bonus_Share
+  Right_Share
+  Other
+}
+enum TransferType {
+  Purchase_Sale
+  Other
+}
+model ShareHistory{
+  id Int @id @default(autoincrement())
+  ownershipType OwnershipType
+  unitsOfShareChanged Float
+  balanceUnitsOfShare Float
+  transactionDate String
+  shareholderId Int
+  ratePerShare Float
+  shareholder Shareholder @relation( fields:[shareholderId],references:[id])
+shareTransferHistoryId Int?
+shareTransferHistory ShareTransferHistory? @relation(fields: [shareTransferHistoryId],references: [id])
+shareUploadHistoryId Int?
+shareUploadHistory ShareUploadHistory? @relation(fields: [shareUploadHistoryId],references: [id])
+remarks String?
+entryDateTime DateTime @default(now())
+}
+
+model Share {
+  id                Int         @id @default(autoincrement())
+  unitsOfShare Float
+  ownershipType     OwnershipType
+  ownershipDate     String
+  cost  Float 
+  shareholderId Int
+  shareholder       Shareholder @relation(fields: [shareholderId], references: [id])
+  remarks String?
+}
+model ShareTransferHistory{
+  id Int @id @default(autoincrement())
+  transferingShareholderId Int
+  transferingShareholder  Shareholder @relation("transferingShareholder",fields:[transferingShareholderId],references:[id])
+  receivingShareholderId Int
+  receivingShareholder Shareholder @relation("receivingShareholder",fields:[receivingShareholderId],references:[id])
+transferType TransferType
+remarks String
+transferRate Float
+wacc Float
+transferredUnitsOfShare Float
+totalGain Float
+shareHistory ShareHistory[]
+transferDate String
+entryDate DateTime @default(now())
+}
+enum ShareholderType {
+  Individual
+  Institution
+}
+
+model WaccHistory{
+  id Int @id @default(autoincrement())
+  shareholderId Int
+  shareholder Shareholder @relation(fields: [shareholderId] ,references: [id])
+  totalCost Float
+  totalUnitsOfShare Float
+  wacc Float
+  calculationDate String
+}
+model Shareholder {
+  id Int @id @default(autoincrement())
+  name       String
+  type  ShareholderType
+  number     Int      @unique
+  ctzOrRegNumber  String?
+  ctzIssueDateOrRegDate    String?
+  fatherName String?
+  contact    String?
+  address String?
+  remarks String?
+  dividend   Dividend[]
+  dividendBalance Float
+  share      Share[]
+  ownedUnitsOfShare Float
+  wacc Float
+  shareHistory ShareHistory[]
+  transferredShareHistory ShareTransferHistory[] @relation("transferingShareholder")
+  receivedShareHistory ShareTransferHistory[] @relation("receivingShareholder")
+  waccHistory WaccHistory[]
+  bankName String?
+  bankAccount String?
+
+}
