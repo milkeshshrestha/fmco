@@ -230,6 +230,19 @@
   ---break---
 */
 
+@layer utilities {
+  @font-face {
+    font-family: "GeistSans";
+    src: url("/fonts/Geist-VariableFont_wght.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+  }
+
+  body {
+    font-family: "GeistSans", sans-serif;
+    font-weight: 400; /* Default weight */
+  }
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;

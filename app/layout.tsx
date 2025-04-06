@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
@@ -9,7 +8,6 @@ import { cookies } from "next/headers";
 import { SiteHeader } from "@/components/site-header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
-const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Fund Management Co",
   description: "Subsidiary of ADBL",
