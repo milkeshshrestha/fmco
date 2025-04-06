@@ -50,13 +50,10 @@ export default function UploadForm() {
     formData.append("ownershipDate", data.ownershipDate);
     formData.append("file", data.file);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/share/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch(`/api/share/upload`, {
+      method: "POST",
+      body: formData,
+    });
     //console.log(data);
     const serverResponse = await response.json();
     if (serverResponse.success) {

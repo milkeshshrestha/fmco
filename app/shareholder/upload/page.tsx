@@ -35,13 +35,10 @@ const UploadForm = () => {
     formData.append("file", data.file);
     setResponse({ success: true, message: "" });
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/shareholder`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`/api/shareholder`, {
+        method: "POST",
+        body: formData,
+      });
 
       const errorResponse = await response.json();
       setResponse(errorResponse);

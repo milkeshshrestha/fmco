@@ -62,13 +62,10 @@ const UploadForm = () => {
     formData.append("transactionDateRange", data.transactionDateRange);
     formData.append("file", data.file);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/dividend`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetch(`/api/dividend`, {
+      method: "POST",
+      body: formData,
+    });
     //console.log(data);
     const serverResponse = await response.json();
     if (serverResponse.success) {
