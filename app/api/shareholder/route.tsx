@@ -39,12 +39,13 @@ export async function POST(request: NextRequest, res: NextResponse) {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = xlsx.utils.sheet_to_json(sheet, {
       header: 1,
-      defval: "", // to consider empty cell value
+      defval: null, // to consider empty cell value
       blankrows: false,
     });
     //console.log(data);
     // Convert the data to JSON
     const rows = data.slice(1).map((row: any) => ({
+      id: undefined,
       number: row[0],
       name: row[1],
       ctzOrRegNumber: row[2],
