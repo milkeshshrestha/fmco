@@ -21,3 +21,10 @@ export const ShareUploadSchema = z.object({
   ownershipDate: z.string().date(), // Corrected to use datetime for validation
   remarks: z.string(),
 });
+
+export const shareSchema = z.object({
+  shareholderNumber: z.coerce.number(),
+  unitsOfShare: z.coerce.number(),
+  cost: z.coerce.number(),
+  remarks: z.string().nullable(),
+});
