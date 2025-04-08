@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar";
@@ -8,6 +7,7 @@ import { cookies } from "next/headers";
 import { SiteHeader } from "@/components/site-header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "@/components/next-themes";
 export const metadata: Metadata = {
   title: "Fund Management Co",
   description: "Subsidiary of ADBL",
@@ -23,7 +23,7 @@ export default async function RootLayout({
   const session = await auth();
   const isAuthenticated = !!session;
   return (
-    <html>
+    <html suppressHydrationWarning>
       <body>
         <SessionProvider>
           <ThemeProvider

@@ -66,32 +66,34 @@ export default async function Home() {
         <CardTitle>Top 10 Shareholders</CardTitle>
         <Card className="p-0">
           {topShareholders && (
-            <Table className="">
-              <TableHeader className="bg-muted">
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Number</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Ctz/ Reg Number</TableHead>
-                  <TableHead>Units Owned</TableHead>
-                  <TableHead>WACC</TableHead>
-                </TableRow>
-              </TableHeader>
+            <div className="rounded-lg overflow-hidden">
+              <Table className="">
+                <TableHeader className="bg-muted">
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Number</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Ctz/ Reg Number</TableHead>
+                    <TableHead>Units Owned</TableHead>
+                    <TableHead>WACC</TableHead>
+                  </TableRow>
+                </TableHeader>
 
-              <TableBody>
-                {topShareholders &&
-                  topShareholders.map((sh, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{sh.name}</TableCell>
-                      <TableCell>{sh.number}</TableCell>
-                      <TableCell>{sh.type}</TableCell>
-                      <TableCell>{sh.ctzIssueDateOrRegDate}</TableCell>
-                      <TableCell>{sh.ownedUnitsOfShare}</TableCell>
-                      <TableCell>{sh.wacc}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+                <TableBody>
+                  {topShareholders &&
+                    topShareholders.map((sh, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{sh.name}</TableCell>
+                        <TableCell>{sh.number}</TableCell>
+                        <TableCell>{sh.type}</TableCell>
+                        <TableCell>{sh.ctzIssueDateOrRegDate}</TableCell>
+                        <TableCell>{sh.ownedUnitsOfShare}</TableCell>
+                        <TableCell>{sh.wacc}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </Card>
       </div>
