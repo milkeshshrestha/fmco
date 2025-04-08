@@ -12,8 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import Link from "next/link";
@@ -29,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { LoaderCircleIcon } from "lucide-react";
 
 const UploadForm = () => {
   const form = useForm<z.infer<typeof dividendUploadFormSchema>>({
@@ -45,17 +45,11 @@ const UploadForm = () => {
     success: boolean;
     message: string;
   };
-  const [serverResponse, setServerResponse] = useState<FormResponse>({
-    success: true,
-    message: "",
-  });
+  const [serverResponse, setServerResponse] = useState<FormResponse>();
   const router = useRouter();
   const onSubmit = async (data: z.infer<typeof dividendUploadFormSchema>) => {
-    //setPending(true);
-    setServerResponse({
-      success: false,
-      message: "",
-    });
+    setPending(true);
+
     const formData = new FormData();
     formData.append("dividendUploadType", data.dividendUploadType);
     formData.append("remarks", data.remarks);
@@ -68,10 +62,11 @@ const UploadForm = () => {
     });
     //console.log(data);
     const serverResponse = await response.json();
+    setServerResponse(serverResponse);
     if (serverResponse.success) {
       toast.success(serverResponse.message);
       router.replace("/");
-    } else setServerResponse(serverResponse);
+    }
 
     setPending(false);
   };
@@ -186,7 +181,10 @@ const UploadForm = () => {
                 disabled={pending}
                 type="submit"
               >
-                Upload
+                Upload{" "}
+                <span hidden={!pending}>
+                  <LoaderCircleIcon className="animate-spin"></LoaderCircleIcon>
+                </span>
               </Button>
               <Button className="" variant="secondary" asChild>
                 <Link href="/documents/dividend_upload_template.xlsx">
@@ -197,34 +195,10 @@ const UploadForm = () => {
           </form>
         </Form>
       </Card>
-      {pending ? (
-        <div>
-          Submitting...{" "}
-          <div
-            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-            role="status"
-          >
-            <span className="absolute! -m-px! h-px! w-px! overflow-hidden! whitespace-nowrap! border-0! p-0! [clip:rect(0,0,0,0)]!">
-              Loading...
-            </span>
-          </div>
-        </div>
-      ) : (
-        <></>
-      )}
-      {serverResponse.message && (
+
+      {serverResponse && (
         <Alert variant={serverResponse.success ? "default" : "destructive"}>
-          <AlertCircle className="h-4 w-4" />
-          {!serverResponse.success && (
-            <AlertDescription>
-              {serverResponse.message.split("\n").map((text, index) => (
-                <React.Fragment key={index}>
-                  {text}
-                  <br />
-                </React.Fragment>
-              ))}
-            </AlertDescription>
-          )}
+          {serverResponse.message}
         </Alert>
       )}
     </div>

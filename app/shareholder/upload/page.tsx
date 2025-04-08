@@ -12,12 +12,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
+import { LoaderCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { shareholderUploadFormSchema } from "@/zod.schema/shareholderUploadFormSchema";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const UploadForm = () => {
   const form = useForm({
@@ -25,23 +25,24 @@ const UploadForm = () => {
   });
   const [pending, setPending] = useState<boolean>(false);
 
-  const [response, setResponse] = useState<FormResponse>({
-    success: true,
-    message: "",
-  });
+  const [response, setResponse] = useState<FormResponse>();
   const onSubmit = async (data: any) => {
     setPending(true);
     const formData = new FormData();
     formData.append("file", data.file);
-    setResponse({ success: true, message: "" });
     try {
       const response = await fetch(`/api/shareholder`, {
         method: "POST",
         body: formData,
       });
-
-      const errorResponse = await response.json();
-      setResponse(errorResponse);
+      const responseJson = await response.json();
+      setResponse(responseJson);
+      if (responseJson.success) {
+        toast.success(responseJson.message);
+        form.reset();
+      } else {
+        toast.error(responseJson.message);
+      }
     } catch (error: any) {
       setResponse({ success: false, error: error.message });
     }
@@ -87,7 +88,10 @@ const UploadForm = () => {
                 disabled={pending}
                 type="submit"
               >
-                Submit
+                Submit{" "}
+                <span hidden={!pending}>
+                  <LoaderCircleIcon className="ml-2 h-4 w-4 animate-spin" />
+                </span>
               </Button>
               <Button className="" variant="secondary" asChild>
                 <Link href="/documents/shareholder_upload_template.xlsx">
@@ -99,35 +103,9 @@ const UploadForm = () => {
         </Form>
       </div>
 
-      {pending ? (
-        <div>
-          Submitting...{" "}
-          <div
-            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-            role="status"
-          >
-            <span className="absolute! -m-px! h-px! w-px! overflow-hidden! whitespace-nowrap! border-0! p-0! [clip:rect(0,0,0,0)]!">
-              Loading...
-            </span>
-          </div>
-        </div>
-      ) : (
-        <></>
-      )}
-      {response.message && (
+      {response && (
         <Alert variant={response.success ? "default" : "destructive"}>
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>{response.message}</AlertTitle>
-          {!response.success && (
-            <AlertDescription>
-              {response?.error?.split("\n").map((text, index) => (
-                <React.Fragment key={index}>
-                  {text}
-                  <br />
-                </React.Fragment>
-              ))}
-            </AlertDescription>
-          )}
+          {response.message}
         </Alert>
       )}
     </div>

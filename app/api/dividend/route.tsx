@@ -6,6 +6,7 @@ import {
 } from "@/zod.schema/dividendSchema";
 import { aggregateErrors } from "@/util/zodErrorAggregator";
 import prisma from "@/prisma/client";
+import getDataFromExcel from "@/data/extractExcel";
 type DividendDataFromExcel = {
   shareholderNumber: number;
   amount: number;
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
   let success: boolean = false;
   try {
     const formData = await request.formData();
-    const file = formData.get("file") as File;
+    const xlfile = formData.get("file") as File;
     const dividendUploadType = formData.get("dividendUploadType");
     const remarks = formData.get("remarks");
     const transactionDateRange = formData.get("transactionDateRange");
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
     const dividendUploadFormValidationResponse =
       dividendUploadFormSchema.safeParse({
         dividendUploadType,
-        file,
+        file: xlfile,
         remarks,
         transactionDateRange,
       });
@@ -42,28 +43,14 @@ export async function POST(request: NextRequest, res: NextResponse) {
       );
       throw new Error();
     }
-    // Object.fromEntries(
-    //   Object.entries(validationResponse.error.flatten().fieldErrors).map(
-    //     ([key, value]) => [key, value.join(", ")]
-    //   )
-    // ),
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // Read the file using xlsx
-    const workbook = xlsx.read(buffer, { type: "buffer" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = xlsx.utils.sheet_to_json(sheet, {
-      header: 1,
-      defval: null, // to consider empty cell value
-      blankrows: false,
-    });
+    const data = await getDataFromExcel(
+      dividendUploadFormValidationResponse.data!.file
+    );
     //console.log(data);
     // Convert the data to JSON
     const rows = data.slice(1).map((row: any) => ({
       transactionDate: row[0],
-
       shareholderNumber: row[1],
       amount: row[2],
       sendingBankName: row[3],
@@ -96,11 +83,14 @@ export async function POST(request: NextRequest, res: NextResponse) {
             }`
           );
     }
+    if (errorRows.length > 0) {
+      message = errorRows.join(" \n ").toString();
+      throw new Error();
+    }
     //check if shareholder number exists
     const shareholderNumberListInExcelFile = validatedDataFromExcel.map(
       (r) => r.shareholderNumber
     );
-
     const shareholdersFromDb = await prisma.shareholder.findMany({
       where: { number: { in: shareholderNumberListInExcelFile } },
     });
@@ -108,9 +98,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
       const shareholderNumbersFromDB = shareholdersFromDb.map(
         (sh) => sh.number
       );
-      const shareholderNotFoundInDb = shareholderNumberListInExcelFile.filter(
-        (numberInExcel) => shareholderNumbersFromDB.includes(numberInExcel)
-      );
+
       let nf: string[] = [];
       validatedDataFromExcel.forEach((dividendFromExcel, index) => {
         const sh = shareholdersFromDb.find(
@@ -130,48 +118,42 @@ export async function POST(request: NextRequest, res: NextResponse) {
     if (errorRows.length > 0) {
       message = errorRows.join(" \n ").toString();
       throw new Error();
-    } else {
-      // save to database
-      const dividendListToSave = rows.map(({ shareholderNumber, ...rest }) => {
+    }
+
+    // save to database
+    const dividendListToSave = validatedDataFromExcel.map(
+      ({ shareholderNumber, ...rest }) => {
         return {
           ...rest,
           shareholderId: shareholdersFromDb.find(
             (sh) => sh.number == shareholderNumber
           )!.id, //! for making sure that shareholder exists
         };
-      });
-      const { file, ...dividendUploadHistory } =
-        dividendUploadFormValidationResponse.data!;
-      //create new div upload history and save dividends
-      const newDividendUploadHistory =
-        await prisma.dividendUploadHistory.create({
-          data: {
-            ...dividendUploadHistory,
-            dividend: { createMany: { data: dividendListToSave } },
-          },
-        });
-      await Promise.all(
-        shareholdersFromDb.map((updatedSh) =>
-          prisma.shareholder.update({
-            where: { id: updatedSh.id },
-            data: { dividendBalance: updatedSh.dividendBalance },
-          })
-        )
-      );
-
-      success = true;
-      message =
-        "Saved " + rows.length + " number of rows to database successfully";
-    }
-
-    return NextResponse.json(
-      {
-        success,
-        message,
-      },
-      { status: success ? 200 : 500 }
+      }
     );
+    const { file, ...dividendUploadHistory } =
+      dividendUploadFormValidationResponse.data!;
+    //create new div upload history and save dividends
+    const newDividendUploadHistory = await prisma.dividendUploadHistory.create({
+      data: {
+        ...dividendUploadHistory,
+        dividend: { createMany: { data: dividendListToSave } },
+      },
+    });
+    await prisma.$transaction(
+      shareholdersFromDb.map((updatedSh) =>
+        prisma.shareholder.update({
+          where: { id: updatedSh.id },
+          data: { dividendBalance: updatedSh.dividendBalance },
+        })
+      )
+    );
+
+    message =
+      "Saved " + rows.length + " number of rows to database successfully";
+
+    return NextResponse.json({ success: true, message }, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ success, message }, { status: 400 });
+    return NextResponse.json({ success: false, message }, { status: 400 });
   }
 }
