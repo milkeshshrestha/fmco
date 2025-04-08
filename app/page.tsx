@@ -55,7 +55,7 @@ export default async function Home() {
               {new Intl.NumberFormat().format(numberOfShareHolders ?? 0)}
             </CardTitle>
             <CardAction>
-              <Link href={"/shareholders"}>
+              <Link href={"/shareholder"}>
                 <Badge variant={"outline"}>View All</Badge>
               </Link>
             </CardAction>

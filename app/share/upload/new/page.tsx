@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { uploadShareData } from "@/actions/share/uploadShare";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -29,6 +28,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { LoaderCircleIcon } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
+import { userAgent } from "next/server";
 
 export default function UploadForm() {
   const form = useForm<z.infer<typeof ShareUploadSchema>>({
@@ -40,12 +42,17 @@ export default function UploadForm() {
       remarks: "",
     },
   });
-  const [serverResponse, setServerResponse] = useState();
+  const [serverResponse, setServerResponse] = useState<{
+    success: boolean;
+    message: string;
+  }>();
   const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
   const handleSubmit = async (data: z.infer<typeof ShareUploadSchema>) => {
     // const response = await uploadShareData(formData);
+    setSubmitting(true);
     const formData = new FormData();
-    formData.append("ownershipType", data.ownershipDate);
+    formData.append("ownershipType", data.ownershipType);
     formData.append("remarks", data.remarks);
     formData.append("ownershipDate", data.ownershipDate);
     formData.append("file", data.file);
@@ -56,10 +63,13 @@ export default function UploadForm() {
     });
     //console.log(data);
     const serverResponse = await response.json();
+    setServerResponse(serverResponse);
     if (serverResponse.success) {
       toast.success(serverResponse.message);
-      router.replace("/share/upload");
-    } else setServerResponse(serverResponse);
+      router.push("/share/upload"); // Redirect to the upload history page
+      //form.reset(); // Reset the form after successful submission
+    }
+    setSubmitting(false);
   };
 
   return (
@@ -167,7 +177,12 @@ export default function UploadForm() {
               />
             </div>
             <div className="flex gap-6">
-              <Button type="submit">Upload</Button>
+              <Button type="submit" disabled={submitting}>
+                Upload{" "}
+                <span hidden={!submitting}>
+                  <LoaderCircleIcon className={`animate-spin`} />
+                </span>
+              </Button>
               <Button className="" variant="secondary" asChild>
                 <Link href="/documents/share_upload_template.xlsx">
                   Download Sample
@@ -176,6 +191,14 @@ export default function UploadForm() {
             </div>
           </form>
         </Form>
+        {serverResponse && (
+          <Alert
+            className={"whitespace-pre-line"}
+            variant={serverResponse.success ? "default" : "destructive"}
+          >
+            {serverResponse.message}
+          </Alert>
+        )}
       </Card>
     </div>
   );

@@ -18,7 +18,8 @@ export const prisma =
   (() => {
     console.log("Creating new Prisma client instance...");
     return new PrismaClient({
-      log: ["query", "info", "warn", "error"],
+      // log: ["query", "info", "warn", "error"],
+      log: ["error"],
     });
     // .$extends({
     //   query: {

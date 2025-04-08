@@ -86,6 +86,7 @@ shareUploadHistoryId Int?
 shareUploadHistory ShareUploadHistory? @relation(fields: [shareUploadHistoryId],references: [id])
 remarks String?
 entryDateTime DateTime @default(now())
+ @@index([transactionDate]) 
 }
 
 model Share {
@@ -150,5 +151,5 @@ model Shareholder {
   waccHistory WaccHistory[]
   bankName String?
   bankAccount String?
-
+ @@index([number]) 
 }
