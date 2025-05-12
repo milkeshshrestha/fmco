@@ -23,6 +23,9 @@ export default async function Home() {
   const numberOfShares = await prisma.shareholder.aggregate({
     _sum: { ownedUnitsOfShare: true },
   });
+  const dividendBalance = await prisma.shareholder.aggregate({
+    _sum: { dividendBalance: true },
+  });
   const numberOfShareHolders = await prisma.shareholder.count({
     where: { ownedUnitsOfShare: { gt: 0 } },
   });
@@ -32,7 +35,7 @@ export default async function Home() {
   });
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-3 gap-6">
         <Card className="">
           <CardHeader>
             <CardDescription>Total Shares</CardDescription>
@@ -61,6 +64,21 @@ export default async function Home() {
             </CardAction>
           </CardHeader>
         </Card>
+        <Card className="">
+          <CardHeader>
+            <CardDescription>Unpaid Dividend</CardDescription>
+            <CardTitle className="text-2xl font-semibold ">
+              {new Intl.NumberFormat().format(
+                dividendBalance._sum.dividendBalance ?? 0
+              )}
+            </CardTitle>
+            <CardAction>
+              <Link href={"/dividend/balance"}>
+                <Badge variant={"outline"}>View All</Badge>
+              </Link>
+            </CardAction>
+          </CardHeader>
+        </Card>
       </div>
       <div className="space-y-4">
         <CardTitle>Top 10 Shareholders</CardTitle>
@@ -75,6 +93,7 @@ export default async function Home() {
                     <TableHead>Type</TableHead>
                     <TableHead>Ctz/ Reg Number</TableHead>
                     <TableHead>Units Owned</TableHead>
+                    <TableHead>Dividend Balance</TableHead>
                     <TableHead>WACC</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -88,6 +107,7 @@ export default async function Home() {
                         <TableCell>{sh.type}</TableCell>
                         <TableCell>{sh.ctzIssueDateOrRegDate}</TableCell>
                         <TableCell>{sh.ownedUnitsOfShare}</TableCell>
+                        <TableCell>{sh.dividendBalance}</TableCell>
                         <TableCell>{sh.wacc}</TableCell>
                       </TableRow>
                     ))}

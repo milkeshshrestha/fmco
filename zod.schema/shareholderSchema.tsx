@@ -54,6 +54,10 @@ export const shareholderSchema = z.object({
     .string()
     .min(1, { message: "Father name is required" })
     .nullable(),
+  grandfatherName: z
+    .string()
+    .min(1, { message: "Grandfather name is required" })
+    .nullable(),
   address: z.string().nullable(),
   contact: z.string().nullable(),
   bankName: z.string().nullable(),

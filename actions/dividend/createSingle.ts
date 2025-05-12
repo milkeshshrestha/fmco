@@ -10,9 +10,19 @@ export default async function createSingleDividend(
     where: { number: dividend.shareholderNumber },
   });
   if (!sh) return { success: false, message: "Shareholder not found" };
+
   const { shareholderNumber, ...dividendForDb } = dividend;
+
+  // Create the dividend entry
   await prisma.dividend.create({
     data: { ...dividendForDb, shareholderId: sh.id },
   });
+
+  // Update the shareholder's dividend balance
+  await prisma.shareholder.update({
+    where: { id: sh.id },
+    data: { dividendBalance: { increment: dividendForDb.amount } },
+  });
+
   return { success: true, message: "Dividend entry created successfully" };
 }

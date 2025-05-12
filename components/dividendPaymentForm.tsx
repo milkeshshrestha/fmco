@@ -116,7 +116,7 @@ export default function SingleDividendCreateForm() {
                                     );
                                     return `${shareholder?.name} (${shareholder?.number})`;
                                   })()
-                                : "Select Transfering Shareholder"}
+                                : "Select Receiving Shareholder"}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
                           </div>
@@ -131,7 +131,12 @@ export default function SingleDividendCreateForm() {
                               <CommandGroup>
                                 {shareholderList.map((shareholder) => (
                                   <CommandItem
-                                    value={shareholder.name}
+                                    value={
+                                      shareholder.name +
+                                      " (" +
+                                      shareholder.number +
+                                      ")"
+                                    }
                                     key={shareholder.id}
                                     onSelect={() => {
                                       form.setValue(
@@ -256,7 +261,7 @@ export default function SingleDividendCreateForm() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className="sm:col-span-3 w-full">
-                    <FormLabel>Transfer date</FormLabel>
+                    <FormLabel>Transaction date</FormLabel>
                     <FormControl>
                       <AdAndBsDateInputWithToggle
                         {...field}

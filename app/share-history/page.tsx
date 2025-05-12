@@ -28,6 +28,11 @@ export default function ShareHistoryPage() {
     {
       accessorKey: "number",
       header: "Sh number",
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value;
+      },
     },
     {
       accessorKey: "ownershipType",

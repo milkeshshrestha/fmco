@@ -49,6 +49,7 @@ export default function CreateEditShareholder({
       type: "Individual",
       contact: null,
       fatherName: null,
+      grandfatherName: null,
       address: null,
       bankName: null,
       bankAccount: null,
@@ -199,6 +200,26 @@ export default function CreateEditShareholder({
                       <Input
                         type="text"
                         placeholder="Shareholder father name"
+                        {...field}
+                        value={field.value ?? ""}
+                      ></Input>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name="grandfatherName"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Grandfather Name (for individual only)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Shareholder grandfather name"
                         {...field}
                         value={field.value ?? ""}
                       ></Input>

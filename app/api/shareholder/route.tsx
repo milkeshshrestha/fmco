@@ -34,12 +34,13 @@ export async function POST(request: NextRequest, res: NextResponse) {
       ctzOrRegNumber: row[2],
       ctzIssueDateOrRegDate: row[3],
       fatherName: row[4],
-      address: row[5],
-      contact: row[6],
-      type: row[7],
-      bankName: row[8],
-      bankAccount: row[9],
-      remarks: row[10],
+      grandfatherName: row[5],
+      address: row[6],
+      contact: row[7],
+      type: row[8],
+      bankName: row[9],
+      bankAccount: row[10],
+      remarks: row[11],
     }));
 
     // Validate each row against the schema

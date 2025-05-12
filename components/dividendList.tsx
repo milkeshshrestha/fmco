@@ -52,14 +52,29 @@ export default function DividendHistoryList({
     {
       accessorKey: "shareholderNumber",
       header: "Shareholder Number",
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value;
+      },
     },
     {
       accessorKey: "debitAmount",
       header: "Debit Amount",
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value;
+      },
     },
     {
       accessorKey: "creditAmount",
       header: "Credit Amount",
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value;
+      },
     },
     {
       accessorKey: "sendingBankName",

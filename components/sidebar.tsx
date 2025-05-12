@@ -1,5 +1,6 @@
 import {
   AlignLeftIcon,
+  AnchorIcon,
   ArrowBigUp,
   ArrowBigUpIcon,
   ChartLineIcon,
@@ -108,6 +109,11 @@ const items = [
     groupName: "Dividend",
     icon: HandCoinsIcon,
     submenuItems: [
+      {
+        title: "Dividend Balance",
+        url: "/dividend/balance",
+        icon: AnchorIcon,
+      },
       {
         title: "Upload Dividend",
         url: "/dividend/upload/new",

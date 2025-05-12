@@ -137,6 +137,7 @@ model Shareholder {
   ctzOrRegNumber  String?
   ctzIssueDateOrRegDate    String?
   fatherName String?
+  grandfatherName String?
   contact    String?
   address String?
   remarks String?

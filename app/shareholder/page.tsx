@@ -26,10 +26,19 @@ export default function ShareholdersTable() {
     {
       accessorKey: "number",
       header: "Sh number",
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value;
+      },
     },
     {
       accessorKey: "fatherName",
       header: "Father Name",
+    },
+    {
+      accessorKey: "grandfatherName",
+      header: "Grandfather Name",
     },
     {
       accessorKey: "type",
@@ -45,7 +54,7 @@ export default function ShareholdersTable() {
     },
     {
       accessorKey: "ctzIssueDateOrRegDate",
-      header: () => <div className="text-right">Date of Birth</div>,
+      header: () => <div className="text-right">Ctz Issue/ Reg Date</div>,
       cell: ({ row }) => {
         // const amount = parseFloat(row.getValue("amount"));
         // const formatted = new Intl.NumberFormat("en-US", {
@@ -66,6 +75,23 @@ export default function ShareholdersTable() {
       cell: ({ row }) => (
         <div className="text-right">{row.getValue("ownedUnitsOfShare")}</div>
       ),
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value.toLowerCase();
+      },
+    },
+    {
+      accessorKey: "dividendBalance",
+      header: "Unpaid Dividend",
+      cell: ({ row }) => (
+        <div className="text-right">{row.getValue("dividendBalance")}</div>
+      ),
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value;
+      },
     },
     {
       accessorKey: "wacc",
@@ -73,6 +99,11 @@ export default function ShareholdersTable() {
       cell: ({ row }) => (
         <div className="text-right">{row.getValue("wacc")}</div>
       ),
+      filterFn: (row, columnId, value) => {
+        //filter input box is string, so we convert value to string
+        const cellValue = String(row.getValue(columnId));
+        return cellValue == value;
+      },
     },
     {
       header: "Action",
@@ -98,10 +129,12 @@ export default function ShareholdersTable() {
     "name",
     "type",
     "number",
-    "ctzOrRegNumber",
+    "ctzIssueDateOrRegDate",
     "fatherName",
+    "grandfatherName",
     "contact",
     "ownedUnitsOfShare",
+    "dividendBalance",
     "wacc",
   ]; // Replace with actual column keys
 
@@ -112,8 +145,10 @@ export default function ShareholdersTable() {
 
     "Ctz/ Reg No.",
     "Father Name",
+    "Grandfather Name",
     "Contact",
     "Units owned",
+    "Unpaid Dividend",
     "Wacc",
   ];
   return (

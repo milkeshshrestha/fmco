@@ -23,11 +23,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { DataTablePagination } from "./pagination";
-import { Shareholder } from "@prisma/client";
-import { Card } from "../card";
-import { ScrollArea } from "../scroll-area";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

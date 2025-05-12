@@ -24,6 +24,11 @@ const columns: ColumnDef<MappedShareData>[] = [
   {
     accessorKey: "number",
     header: "Sh number",
+    filterFn: (row, columnId, value) => {
+      //filter input box is string, so we convert value to string
+      const cellValue = String(row.getValue(columnId));
+      return cellValue == value;
+    },
   },
 
   {
@@ -34,6 +39,11 @@ const columns: ColumnDef<MappedShareData>[] = [
         {Intl.NumberFormat().format(row.getValue("ownedUnitsOfShare"))}
       </div>
     ),
+    filterFn: (row, columnId, value) => {
+      //filter input box is string, so we convert value to string
+      const cellValue = String(row.getValue(columnId));
+      return cellValue == value;
+    },
   },
   {
     accessorKey: "lastTransactionDate",

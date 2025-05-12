@@ -1,21 +1,21 @@
 "use client";
-import { DataTable } from "../../components/ui/table/data-table";
+import { getAllShareholders } from "@/data/sharedholderData";
 import { ColumnDef } from "@tanstack/react-table";
 import { Shareholder } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { getAllShare, ShareholderWithShare } from "@/data/shareData";
+import Link from "next/link";
+import { DataTable } from "@/components/ui/table/data-table";
 
-export default function SharePage() {
-  const [shareList, setShareList] = useState<ShareholderWithShare[]>([]);
+export default function ShareholdersTable() {
+  const [shareholderList, setShareholderList] = useState<Shareholder[]>([]);
 
   useEffect(() => {
     const loadShareholderData = async () => {
-      const data = await getAllShare();
-      setShareList(data);
+      setShareholderList(await getAllShareholders());
     };
     loadShareholderData();
   }, []);
-  const columns: ColumnDef<ShareholderWithShare>[] = [
+  const columns: ColumnDef<Shareholder>[] = [
     {
       accessorKey: "name",
       header: "Full Name",
@@ -30,22 +30,23 @@ export default function SharePage() {
       },
     },
     {
-      accessorKey: "ownershipType",
-      header: "Transaction Type",
-    },
-
-    {
-      accessorKey: "ownershipDate",
-      header: "Trans Date",
-      cell: ({ row }) => (
-        <div className="text-right">{row.getValue("ownershipDate")}</div>
-      ),
+      accessorKey: "fatherName",
+      header: "Father Name",
     },
     {
-      accessorKey: "unitsOfShare",
-      header: "Units",
+      accessorKey: "contact",
+      header: "Contact Number",
+    },
+    {
+      accessorKey: "dividendBalance",
+      header: "Unpaid Dividend",
       cell: ({ row }) => (
-        <div className="text-right">{row.getValue("unitsOfShare")}</div>
+        <div className="text-right">
+          {Number(row.getValue("dividendBalance")).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </div>
       ),
       filterFn: (row, columnId, value) => {
         //filter input box is string, so we convert value to string
@@ -53,36 +54,30 @@ export default function SharePage() {
         return cellValue == value;
       },
     },
-    {
-      accessorKey: "remarks",
-      header: "Remarks",
-    },
   ];
   const columnsToExport = [
     "name",
     "number",
-    "ownershipType",
-    "ownershipDate",
-    "unitsOfShare",
-    "remarks",
+    "fatherName",
+    "contact",
+    "dividendBalance",
   ]; // Replace with actual column keys
 
   const exportHeaderName = [
-    "Name",
-    "Number",
-    "Ownership Type",
-    "Ownership Date",
-    "Units Of Share",
-    "Remarks",
+    "Full Name",
+    "Shareholder Number",
+    "Father Name",
+    "Contact",
+    "Unpaid Dividend",
   ];
   return (
     <div className="px-4">
       <DataTable
         columns={columns}
-        data={shareList}
+        data={shareholderList}
         exportHeaderNames={exportHeaderName}
-        exportFileName="Remaining Share"
-        title="Remaining Share"
+        exportFileName="Dividend balance list"
+        title="Dividend Balance List"
         columnsToExport={columnsToExport}
       />
     </div>
