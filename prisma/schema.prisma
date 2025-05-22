@@ -154,3 +154,47 @@ model Shareholder {
   bankAccount String?
  @@index([number]) 
 }
+enum SecurityClassification{
+  Equity
+  Bond
+  Mutual_Fund
+  Other
+}
+enum SecurityClassificationAsPerNFRS{
+  FVTPL
+  FVOCI
+  Amortized_Cost
+  Other
+}
+model Security{
+  id Int @id @default(autoincrement())
+  name String 
+  shortName String @unique
+  securityClassification SecurityClassification
+  securityTransactionDetail SecurityTransactionDetail[]
+}
+enum SecurityAdditionNature{
+  Purchase
+  Right_Share
+  Bonus_Share
+  Other
+}
+model SecurityTransaction{
+  id Int @id @default(autoincrement())
+  transactionDate String
+  entryDate DateTime @default(now())
+  securityTransactionDetail SecurityTransactionDetail[]
+}
+model SecurityTransactionDetail{
+  id Int @id @default(autoincrement())
+  quantity Float
+  price Float
+  amount Float
+  securityAdditionNature SecurityAdditionNature?
+  securityClassificationAsPerNFRS SecurityClassificationAsPerNFRS
+  securityId Int
+  security Security @relation(fields: [securityId], references: [id])
+  securityTransactionId Int
+  securityTransaction SecurityTransaction @relation(fields: [securityTransactionId], references: [id])
+  remarks String?
+}

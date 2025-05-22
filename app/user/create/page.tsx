@@ -15,7 +15,7 @@ import { AlertCircle, CircleCheck } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 import createUserAction from "@/actions/user/createUser";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useSession } from "next-auth/react";
@@ -81,7 +81,6 @@ export default function UserCreatePage() {
       }
     });
   };
-  const formRef = useRef<HTMLFormElement>(null);
   return (
     <Card className="px-4 min-w-[300px] max-w-[400px]">
       <div className="space-y-4">
@@ -95,7 +94,6 @@ export default function UserCreatePage() {
               <form
                 className="space-y-6 "
                 onSubmit={form.handleSubmit(onSubmit)}
-                ref={formRef}
               >
                 <FormField
                   control={form.control}

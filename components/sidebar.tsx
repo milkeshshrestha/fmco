@@ -3,6 +3,7 @@ import {
   AnchorIcon,
   ArrowBigUp,
   ArrowBigUpIcon,
+  ChartCandlestickIcon,
   ChartLineIcon,
   ChevronRight,
   GalleryHorizontalEndIcon,
@@ -16,6 +17,7 @@ import {
   MountainIcon,
   Plus,
   PlusIcon,
+  ReceiptIcon,
   SendIcon,
   SmileIcon,
   UserIcon,
@@ -142,6 +144,32 @@ const items = [
     ],
   },
   {
+    groupName: "Trade",
+    icon: ChartCandlestickIcon,
+    submenuItems: [
+      {
+        title: "Create Security",
+        url: "/trade/security/create",
+        icon: PlusIcon,
+      },
+      {
+        title: "View Security List",
+        url: "/trade/security",
+        icon: AlignLeftIcon,
+      },
+      {
+        title: "Record trade transaction",
+        url: "/trade/transaction/daily",
+        icon: PlusIcon,
+      },
+      {
+        title: "Report Gain/Loss",
+        url: "/trade/transaction/gain",
+        icon: ReceiptIcon,
+      },
+    ],
+  },
+  {
     groupName: "Users",
     icon: SmileIcon,
     submenuItems: [
@@ -194,6 +222,7 @@ export function AppSidebar() {
                     className="group/collapsible"
                   >
                     <SidebarMenuItem>
+                      {/* <CollapsibleTrigger asChild> */}
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton>
                           <menuItem.icon />

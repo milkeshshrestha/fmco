@@ -49,6 +49,7 @@ const NepaliDatePickerWrapper: React.FC<NepaliDatePickerWrapperProps> = (
     <div>
       <div ref={customInputContainerRef} id="customNepaliDatePickerContainer">
         <Input
+          className="min-w-[60px]"
           {...props}
           onChangeCapture={(e) =>
             handleChangeInNepaliDatePicker(e.currentTarget.value)
