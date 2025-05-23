@@ -3,53 +3,38 @@ import AdAndBsDateInputWithToggle from "@/components/adAndBsDateInputWithToggle"
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { ADToBS, BSToAD } from "bikram-sambat-js";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoaderCircleIcon } from "lucide-react";
-import {
-  getTransactionSummaryBySecurityWithClassification,
-  TransactionSummaryBySecurityWithClassification,
-} from "@/data/trade";
+import { getTransactionSummaryBySecurityAndDateWithClassification } from "@/data/trade";
 import { DataTable } from "@/components/table/data-table";
+import {
+  getSecurityBalanceWithClassification,
+  getTransactionResultBySecurityAndDateWithClassification,
+  SecurityBalanceWithClassification,
+} from "@/services/transactionDetail";
 
-export default function TradeSecuritySummaryBySecurityPage() {
-  const columns: ColumnDef<TransactionSummaryBySecurityWithClassification>[] = [
+export default function BalanceSecurityPage() {
+  const columns: ColumnDef<SecurityBalanceWithClassification>[] = [
     { accessorKey: "securityName", header: "Name" },
     { accessorKey: "securityShortName", header: "Short Name" },
     {
       accessorKey: "securityClassificationAsPerNFRS",
-      header: "NFRS Classification",
+      header: "Classification",
     },
-    { accessorKey: "additionQuantity", header: "Purchase Quantity" },
-    {
-      accessorKey: "salesQuantity",
-      accessorFn: (data) => -data.salesQuantity,
-      header: "Sold Quantity",
-    },
-    { accessorKey: "additionAmount", header: "Cost of Purchase" },
-    { accessorKey: "salesAmount", header: "Sales Revenue" },
+    { accessorKey: "remainingQuantity", header: "Remaining Qty" },
+    { accessorKey: "remainingCost", header: "Cost of Remaining Qty" },
+    { accessorKey: "wacc", header: "Closing WACC" },
   ];
   const exportHeaderName = [
     "Name",
     "Short Name",
-    "NFRS Classification",
-    "Purchase Quantity",
-    "Sold Quantity",
-    "Purchase Cost",
-    "Sales revenue",
+    "Classification",
+    "Remaining Qty",
+    "Cost of Remaining Qty",
+    "Closing WACC",
   ];
-  const todayBSDate = ADToBS(new Date());
-  const todayBSMonth = Number(todayBSDate.split("-")[1]);
-  const fyStartDate = BSToAD(
-    todayBSMonth > 3
-      ? todayBSDate.split("-")[0]
-      : Number(todayBSDate.split("-")[0]) - 1 + "-04-01"
-  );
-  const [data, setData] = useState<
-    TransactionSummaryBySecurityWithClassification[]
-  >([]);
-  const [fromDate, setFromDate] = useState<string>(fyStartDate);
+  const [data, setData] = useState<SecurityBalanceWithClassification[]>([]);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [toDate, setToDate] = useState<string>(
     new Date().toISOString().split("T")[0]
@@ -58,33 +43,26 @@ export default function TradeSecuritySummaryBySecurityPage() {
   const onClickHandler = async () => {
     setLoading(true);
     setShowTable(false);
+    const transactionDetail =
+      await getTransactionSummaryBySecurityAndDateWithClassification(toDate);
+    const resultAfterCostCalc =
+      getTransactionResultBySecurityAndDateWithClassification(
+        transactionDetail
+      );
 
-    const result = await getTransactionSummaryBySecurityWithClassification(
-      fromDate,
-      toDate
-    );
-    setData(result);
+    const grouped = getSecurityBalanceWithClassification(resultAfterCostCalc);
+    setData(grouped);
+    //console.log("grouped", grouped);
     setLoading(false);
     setShowTable(true);
   };
 
   return (
     <div className="space-y-4">
-      <div className="sm:grid sm:grid-cols-3 flex flex-wrap gap-4">
-        <div>
-          <Label htmlFor="fromDate" className="pb-2">
-            From Date
-          </Label>
-          <AdAndBsDateInputWithToggle
-            value={fromDate}
-            required={true}
-            id="fromDate"
-            onChange={(value: any) => setFromDate(value)}
-          />
-        </div>
+      <div className="sm:grid sm:grid-cols-3 flex gap-4">
         <div>
           <Label htmlFor="toDate" className="pb-2">
-            To Date
+            As on Date
           </Label>
           <AdAndBsDateInputWithToggle
             value={toDate}
@@ -108,8 +86,8 @@ export default function TradeSecuritySummaryBySecurityPage() {
           columns={columns}
           data={data}
           exportHeaderNames={exportHeaderName}
-          exportFileName="Security transaction report"
-          title="Security transaction report"
+          exportFileName="Gain loss detail"
+          title="Gain Loss calculation"
         />
       </div>
     </div>

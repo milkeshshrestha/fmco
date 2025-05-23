@@ -7,37 +7,43 @@ import { ADToBS, BSToAD } from "bikram-sambat-js";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoaderCircleIcon } from "lucide-react";
-import {
-  getTransactionSummaryBySecurityWithClassification,
-  TransactionSummaryBySecurityWithClassification,
-} from "@/data/trade";
+import { getTransactionSummaryBySecurityAndDateWithClassification } from "@/data/trade";
 import { DataTable } from "@/components/table/data-table";
+import {
+  getTransactionResultBySecurityAndDateWithClassification,
+  getTransactionResultGroupedBySecurityWithClassification,
+  TransactionResultBySecurityWithClassification,
+} from "@/services/transactionDetail";
 
 export default function TradeSecuritySummaryBySecurityPage() {
-  const columns: ColumnDef<TransactionSummaryBySecurityWithClassification>[] = [
+  const columns: ColumnDef<TransactionResultBySecurityWithClassification>[] = [
     { accessorKey: "securityName", header: "Name" },
     { accessorKey: "securityShortName", header: "Short Name" },
     {
       accessorKey: "securityClassificationAsPerNFRS",
-      header: "NFRS Classification",
+      header: "Classification",
     },
     { accessorKey: "additionQuantity", header: "Purchase Quantity" },
-    {
-      accessorKey: "salesQuantity",
-      accessorFn: (data) => -data.salesQuantity,
-      header: "Sold Quantity",
-    },
     { accessorKey: "additionAmount", header: "Cost of Purchase" },
+    { accessorKey: "salesQuantity", header: "Sold Quantity" },
     { accessorKey: "salesAmount", header: "Sales Revenue" },
+    { accessorKey: "gain", header: "Gain (loss)" },
+    { accessorKey: "remainingQuantity", header: "Remaining Qty" },
+    { accessorKey: "remainingCost", header: "Cost of Remaining Qty" },
+    { accessorKey: "wacc", header: "Closing WACC" },
   ];
   const exportHeaderName = [
     "Name",
     "Short Name",
-    "NFRS Classification",
+    "Classification",
     "Purchase Quantity",
+    "Cost of Purchase",
     "Sold Quantity",
-    "Purchase Cost",
     "Sales revenue",
+    "Gain (Loss)",
+    "Remaining Qty",
+    "Cost of Remaining Qty",
+    "Closing WACC",
   ];
   const todayBSDate = ADToBS(new Date());
   const todayBSMonth = Number(todayBSDate.split("-")[1]);
@@ -47,7 +53,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
       : Number(todayBSDate.split("-")[0]) - 1 + "-04-01"
   );
   const [data, setData] = useState<
-    TransactionSummaryBySecurityWithClassification[]
+    TransactionResultBySecurityWithClassification[]
   >([]);
   const [fromDate, setFromDate] = useState<string>(fyStartDate);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -58,19 +64,29 @@ export default function TradeSecuritySummaryBySecurityPage() {
   const onClickHandler = async () => {
     setLoading(true);
     setShowTable(false);
+    const transactionDetail =
+      await getTransactionSummaryBySecurityAndDateWithClassification(toDate);
+    const resultAfterCostCalc =
+      getTransactionResultBySecurityAndDateWithClassification(
+        transactionDetail
+      );
+    //console.log("transaction", transactionDetail);
 
-    const result = await getTransactionSummaryBySecurityWithClassification(
-      fromDate,
-      toDate
+    const filteredForDate = resultAfterCostCalc.filter(
+      (s) => s.transactionDate >= fromDate
     );
-    setData(result);
+
+    const grouped =
+      getTransactionResultGroupedBySecurityWithClassification(filteredForDate);
+    setData(grouped);
+    //console.log("grouped", grouped);
     setLoading(false);
     setShowTable(true);
   };
 
   return (
     <div className="space-y-4">
-      <div className="sm:grid sm:grid-cols-3 flex flex-wrap gap-4">
+      <div className="sm:grid sm:grid-cols-3 flex gap-4">
         <div>
           <Label htmlFor="fromDate" className="pb-2">
             From Date
@@ -108,8 +124,8 @@ export default function TradeSecuritySummaryBySecurityPage() {
           columns={columns}
           data={data}
           exportHeaderNames={exportHeaderName}
-          exportFileName="Security transaction report"
-          title="Security transaction report"
+          exportFileName="Gain loss detail"
+          title="Gain Loss calculation"
         />
       </div>
     </div>

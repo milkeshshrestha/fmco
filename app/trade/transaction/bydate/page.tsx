@@ -71,7 +71,7 @@ export default function TradeSecuritySummaryByDatePage() {
 
   return (
     <div className="space-y-4">
-      <div className="md:grid md:grid-cols-5 flex gap-4">
+      <div className="sm:grid sm:grid-cols-3 flex gap-4">
         <div>
           <Label htmlFor="fromDate" className="pb-2">
             From Date

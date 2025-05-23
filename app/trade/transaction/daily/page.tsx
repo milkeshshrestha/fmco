@@ -142,6 +142,7 @@ export default function DailyTransactionPage() {
             remarks: td.remarks,
           };
         });
+      setIsDataRecentlyLoaded(true);
       setTransactionData(transactionDataForSchema);
     }
     setIsLoading(false);
@@ -161,6 +162,12 @@ export default function DailyTransactionPage() {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const onDeleteHandler = (index: number) => {
     setTransactionData(transactionData.filter((td) => td.index != index));
+  };
+  const [isDataRecentlyLoaded, setIsDataRecentlyLoaded] = useState(false);
+  const onDateChangeHandler = (date: string) => {
+    if (isDataRecentlyLoaded) setTransactionData([]);
+    setTransactionDate(date);
+    setIsDataRecentlyLoaded(false);
   };
   const onEditHandler = (index: number) => {
     //{ keepDefaultValues: true } prevents original default from changing
@@ -188,6 +195,7 @@ export default function DailyTransactionPage() {
       { ...data },
     ]);
     form.reset();
+    form.setValue("index", transactionData.length + 1);
     form.setValue("isAdditionTransaction", isPurchaseCurrentlySelected);
   };
   useEffect(() => {
@@ -202,7 +210,6 @@ export default function DailyTransactionPage() {
         .sort((a, b) => a.index - b.index)
     );
   }, [transactionData]);
-
   const saveButtonClickHandler = () => {
     if (!transactionDate) {
       toast.error("Select transaction date first");
@@ -229,7 +236,7 @@ export default function DailyTransactionPage() {
             value={new Date().toISOString().split("T")[0]}
             required={true}
             id="date"
-            onChange={(value: any) => setTransactionDate(value)}
+            onChange={(value: any) => onDateChangeHandler(value)}
           />
         </div>
         <Button onClick={onclickHandler} disabled={isLoading}>
@@ -519,7 +526,7 @@ export default function DailyTransactionPage() {
                                           (security) =>
                                             security.id === field.value
                                         );
-                                        return `${security?.name} (${security?.shortName})`;
+                                        return `${security?.shortName}`;
                                       })()
                                     : "Select Security"}
                                   <ChevronsUpDown className="opacity-50" />
@@ -745,7 +752,7 @@ export default function DailyTransactionPage() {
               <DialogFooter>
                 <Button
                   type="submit"
-                  className={`${isAdditionTransaction ? "" : "bg-red-800"}`}
+                  variant={isAdditionTransaction ? "default" : "destructive"}
                 >
                   {`${isAdditionTransaction ? "Buy" : "Sell"} Securities`}
                 </Button>
