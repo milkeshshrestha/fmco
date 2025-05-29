@@ -20,6 +20,10 @@ export default function TradeSecuritySummaryByDatePage() {
   }>[] = [
     { accessorKey: "transactionDate", header: "Transaction Date" },
     {
+      accessorFn: (data) => ADToBS(data.transactionDate),
+      header: "Date BS",
+    },
+    {
       accessorKey: "additionQuantity",
       header: "Added Quantity",
     },
@@ -33,6 +37,7 @@ export default function TradeSecuritySummaryByDatePage() {
   ];
   const exportHeaderName = [
     "Date",
+    "Date BS",
     "Purchase Quantity",
     "Sold Quantity",
     "Purchase Cost",

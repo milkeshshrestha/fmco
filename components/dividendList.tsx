@@ -2,7 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Dividend, Prisma } from "@prisma/client";
-import { DataTable } from "./ui/table/data-table";
+import { ADToBS } from "bikram-sambat-js";
+import { DataTable } from "./table/data-table";
 type DividendListFromDbWithShareholder = Prisma.DividendGetPayload<{
   include: { shareholder: true };
 }>;
@@ -33,6 +34,10 @@ export default function DividendHistoryList({
 
   const columns: ColumnDef<DividendWithShareholder>[] = [
     { accessorKey: "transactionDate", header: "Transaction Date" },
+    {
+      accessorFn: (data) => ADToBS(data.transactionDate),
+      header: "Date BS",
+    },
     {
       accessorKey: "shareholderName",
       header: "Shareholder Name",
@@ -98,7 +103,8 @@ export default function DividendHistoryList({
     },
   ];
   const exportHeaderName = [
-    "transactionDate",
+    "TransactionDate",
+    "Date BS",
     "Shareholder Name",
     "Shareholder Number",
     "Debit Amount",
@@ -109,18 +115,6 @@ export default function DividendHistoryList({
     "Receiver Bank Account",
     "Remarks",
   ];
-  const columnsToExport = [
-    "transactionDate",
-    "shareholderName",
-    "shareholderNumber",
-    "debitAmount",
-    "creditAmount",
-    "sendingBankName",
-    "sendingBankAccount",
-    "receivingBankName",
-    "receivingBankAccount",
-    "remarks",
-  ];
   return (
     <div className="">
       <DataTable
@@ -128,7 +122,6 @@ export default function DividendHistoryList({
         data={dividendWithShareholderList}
         exportHeaderNames={exportHeaderName}
         exportFileName={title}
-        columnsToExport={columnsToExport}
         title={title}
       />
     </div>

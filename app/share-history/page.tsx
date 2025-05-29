@@ -1,12 +1,12 @@
 "use client";
-import { DataTable } from "../../components/ui/table/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { Shareholder } from "@prisma/client";
 import { useEffect, useState } from "react";
 import {
   getAllShareHistory,
   ShareholderWithShareHistory,
 } from "@/data/shareHistory";
+import { ADToBS } from "bikram-sambat-js";
+import { DataTable } from "@/components/table/data-table";
 
 export default function ShareHistoryPage() {
   const [shareHistoryList, setShareHistoryList] = useState<
@@ -47,6 +47,10 @@ export default function ShareHistoryPage() {
       ),
     },
     {
+      accessorFn: (data) => ADToBS(data.transactionDate),
+      header: "Date BS",
+    },
+    {
       accessorKey: "unitsOfShareChanged",
       header: "Units",
       cell: ({ row }) => (
@@ -58,20 +62,13 @@ export default function ShareHistoryPage() {
       header: "Remarks",
     },
   ];
-  const columnsToExport = [
-    "name",
-    "number",
-    "ownershipType",
-    "transactionDate",
-    "unitsOfShareChanged",
-    "remarks",
-  ]; // Replace with actual column keys
 
   const exportHeaderName = [
     "Name",
     "Number",
     "Transaction Type",
     "Transaction Date",
+    "Date BS",
     "Changed Units",
     "Remarks",
   ];
@@ -83,7 +80,6 @@ export default function ShareHistoryPage() {
         exportHeaderNames={exportHeaderName}
         exportFileName="Transaction History"
         title="Transaction History"
-        columnsToExport={columnsToExport}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { ADToBS } from "bikram-sambat-js";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import getAllUploadHistory from "@/data/shareUpload";
@@ -53,7 +54,11 @@ export default function UploadHistoryPage() {
               {uploadShareHistory &&
                 uploadShareHistory.map((uploadhistory, index) => (
                   <TableRow key={index}>
-                    <TableCell>{uploadhistory.ownershipDate}</TableCell>
+                    <TableCell>
+                      {uploadhistory.ownershipDate}
+                      {" | "}
+                      {ADToBS(uploadhistory.ownershipDate)}
+                    </TableCell>
                     <TableCell>{uploadhistory.ownershipType}</TableCell>
                     <TableCell>{uploadhistory.remarks}</TableCell>
                     <TableCell>

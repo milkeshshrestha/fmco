@@ -25,6 +25,11 @@ export default function TradeSecuritySummaryBySecurityPage() {
         header: "Classification",
       },
       { accessorKey: "transactionDate", header: "Date" },
+      {
+        accessorFn: (data) => ADToBS(data.transactionDate),
+        header: "Date BS",
+      },
+
       { accessorKey: "additionQuantity", header: "Purchase Quantity" },
       { accessorKey: "additionAmount", header: "Cost of Purchase" },
       { accessorKey: "cumQuantity", header: "Total Quantity" },
@@ -41,6 +46,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
     "Short Name",
     "Classification",
     "Date",
+    "Date BS",
     "Purchase Quantity",
     "Cost of Purchase",
     "Total Quantity",
