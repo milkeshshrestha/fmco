@@ -100,8 +100,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
         );
         const revisedWacc = Number(
           (
-            (shareholder!.wacc * shareholder!.ownedUnitsOfShare +
-              share.cost * share.unitsOfShare) /
+            (shareholder!.wacc * shareholder!.ownedUnitsOfShare + share.cost) /
             revisedUnitsOfShare
           ).toFixed(4)
         );
@@ -128,7 +127,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
           ownershipType: formData.ownershipType,
           unitsOfShareChanged: share.unitsOfShare,
           balanceUnitsOfShare: revisedUnitsOfShare,
-          ratePerShare: share.cost,
+          ratePerShare: share.cost / share.unitsOfShare,
           transactionDate: formData.ownershipDate,
           remarks: share.remarks + "|" + formData.remarks,
           shareholderId: shareholder!.id,
