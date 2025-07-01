@@ -38,6 +38,14 @@ export default function ShareholdersTable() {
       header: "Contact Number",
     },
     {
+      accessorKey: "bankName",
+      header: "Bank ",
+    },
+    {
+      accessorKey: "bankAccount",
+      header: "Account Number",
+    },
+    {
       accessorKey: "dividendBalance",
       header: "Unpaid Dividend",
       cell: ({ row }) => (
@@ -59,6 +67,8 @@ export default function ShareholdersTable() {
     "name",
     "number",
     "fatherName",
+    "bankName",
+    "bankAccount",
     "contact",
     "dividendBalance",
   ]; // Replace with actual column keys
@@ -67,6 +77,8 @@ export default function ShareholdersTable() {
     "Full Name",
     "Shareholder Number",
     "Father Name",
+    "Bank Name",
+    "Bank Account",
     "Contact",
     "Unpaid Dividend",
   ];

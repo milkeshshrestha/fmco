@@ -66,6 +66,11 @@ export default function DividendHistoryList({
     {
       accessorKey: "debitAmount",
       header: "Debit Amount",
+      cell: ({ row }) => (
+        <div className="text-right">
+          {Intl.NumberFormat().format(row.getValue("debitAmount"))}
+        </div>
+      ),
       filterFn: (row, columnId, value) => {
         //filter input box is string, so we convert value to string
         const cellValue = String(row.getValue(columnId));
@@ -75,6 +80,11 @@ export default function DividendHistoryList({
     {
       accessorKey: "creditAmount",
       header: "Credit Amount",
+      cell: ({ row }) => (
+        <div className="text-right">
+          {Intl.NumberFormat().format(row.getValue("creditAmount"))}
+        </div>
+      ),
       filterFn: (row, columnId, value) => {
         //filter input box is string, so we convert value to string
         const cellValue = String(row.getValue(columnId));

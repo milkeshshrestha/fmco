@@ -107,8 +107,14 @@ export default async function Home() {
                         <TableCell>{sh.type}</TableCell>
                         <TableCell>{sh.ctzIssueDateOrRegDate}</TableCell>
                         <TableCell>{sh.ownedUnitsOfShare}</TableCell>
-                        <TableCell>{sh.dividendBalance}</TableCell>
-                        <TableCell>{sh.wacc}</TableCell>
+                        <TableCell className="text-right">
+                          {Intl.NumberFormat().format(sh.dividendBalance)}
+                        </TableCell>
+                        <TableCell>
+                          {Intl.NumberFormat().format(
+                            parseFloat(sh.wacc.toFixed(2))
+                          )}
+                        </TableCell>
                       </TableRow>
                     ))}
                 </TableBody>

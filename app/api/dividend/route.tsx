@@ -7,6 +7,7 @@ import {
 import { aggregateErrors } from "@/util/zodErrorAggregator";
 import prisma from "@/prisma/client";
 import getDataFromExcel from "@/data/extractExcel";
+import { Shareholder } from "@prisma/client";
 type DividendDataFromExcel = {
   shareholderNumber: number;
   amount: number;
@@ -65,6 +66,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
       throw new Error();
     }
 
+    let foundShareholders: Shareholder[] = [];
     // Validate each row against the schema
     var errorRows: any = [];
     let validatedDataFromExcel: DividendDataFromExcel[] = [];
@@ -108,7 +110,8 @@ export async function POST(request: NextRequest, res: NextResponse) {
           nf.push(
             dividendFromExcel.shareholderNumber + " at SNo. " + (index + 1)
           );
-        if (sh) sh.dividendBalance += dividendFromExcel.amount;
+        if (sh)
+          sh.dividendBalance += parseFloat(dividendFromExcel.amount.toFixed(2));
       });
       if (nf.length > 0)
         errorRows.push("Shareholders not found for number:" + nf.join(", "));
@@ -125,6 +128,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
       ({ shareholderNumber, ...rest }) => {
         return {
           ...rest,
+          amount: parseFloat(rest.amount.toFixed(2)), //convert to float with 2 decimal places
           shareholderId: shareholdersFromDb.find(
             (sh) => sh.number == shareholderNumber
           )!.id, //! for making sure that shareholder exists
@@ -140,14 +144,21 @@ export async function POST(request: NextRequest, res: NextResponse) {
         dividend: { createMany: { data: dividendListToSave } },
       },
     });
-    await prisma.$transaction(
-      shareholdersFromDb.map((updatedSh) =>
-        prisma.shareholder.update({
-          where: { id: updatedSh.id },
-          data: { dividendBalance: updatedSh.dividendBalance },
-        })
-      )
-    );
+    await prisma.shareholder.updateMany({ data: foundShareholders });
+    // await prisma.$transaction(
+    //   shareholdersFromDb.map((updatedSh) =>
+    //     prisma.shareholder.update({
+    //       where: { id: updatedSh.id },
+    //       data: {
+    //         dividendBalance: {
+    //           increment: dividendListToSave
+    //             .filter((div) => div.shareholderId == updatedSh.id)
+    //             .reduce((acc, curr) => acc + curr.amount, 0),
+    //         },
+    //       },
+    //     })
+    //   )
+    // );
 
     message =
       "Saved " + rows.length + " number of rows to database successfully";

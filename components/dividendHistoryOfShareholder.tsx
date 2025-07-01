@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { ADToBS } from "bikram-sambat-js";
 import {
   Card,
   CardContent,
@@ -51,7 +52,8 @@ export default function DividendHistoryComponent({
         <Table className="">
           <TableHeader className="bg-muted">
             <TableRow>
-              <TableHead>Transaction Date</TableHead>
+              <TableHead>Transaction Date AD</TableHead>
+              <TableHead>Transaction Date BS</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Cumulative Amount</TableHead>
               <TableHead>Sending Bank Name </TableHead>
@@ -67,7 +69,10 @@ export default function DividendHistoryComponent({
               dividendData.map((dividend, index) => (
                 <TableRow key={index}>
                   <TableCell>{dividend.transactionDate}</TableCell>
-                  <TableCell>{dividend.amount}</TableCell>
+                  <TableCell>{ADToBS(dividend.transactionDate)}</TableCell>
+                  <TableCell className="text-right">
+                    {dividend.amount}
+                  </TableCell>
                   <TableCell>{dividend.cumAmount}</TableCell>
                   <TableCell>{dividend.sendingBankName}</TableCell>
                   <TableCell>{dividend.receivingBankName}</TableCell>
