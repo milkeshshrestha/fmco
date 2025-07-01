@@ -26,6 +26,7 @@ export default function UploadedSharesDetailComponent({
         number: sh.shareholder.number,
         transactionDate: sh.transactionDate,
         unitsOfShareChanged: sh.unitsOfShareChanged,
+        ratePerShare: sh.ratePerShare,
         ownershipType: sh.ownershipType.toString(),
         remarks: sh.remarks,
       };
@@ -59,6 +60,13 @@ export default function UploadedSharesDetailComponent({
       ),
     },
     {
+      accessorKey: "ratePerShare",
+      header: "Rate Per Share",
+      cell: ({ row }) => (
+        <div className="text-right">{row.getValue("ratePerShare")}</div>
+      ),
+    },
+    {
       accessorKey: "remarks",
       header: "Remarks",
     },
@@ -69,6 +77,7 @@ export default function UploadedSharesDetailComponent({
     "ownershipType",
     "transactionDate",
     "unitsOfShareChanged",
+    "ratePerShare",
     "remarks",
   ];
 
@@ -78,6 +87,7 @@ export default function UploadedSharesDetailComponent({
     "Transaction Type",
     "Transaction Date",
     "Changed Units",
+    "Rate Per Share",
     "Remarks",
   ];
   return (

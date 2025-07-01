@@ -106,11 +106,21 @@ export async function POST(request: NextRequest, res: NextResponse) {
         );
 
         operations.push(
-          prisma.shareholder.updateMany({
+          prisma.shareholder.update({
             where: { id: shareholder!.id },
             data: {
               ownedUnitsOfShare: revisedUnitsOfShare,
               wacc: revisedWacc,
+              waccHistory: {
+                create: {
+                  calculationDate: formData.ownershipDate,
+                  totalUnitsOfShare: revisedUnitsOfShare,
+                  totalCost:
+                    share.cost +
+                    shareholder!.wacc * shareholder!.ownedUnitsOfShare,
+                  wacc: revisedWacc,
+                },
+              },
             },
           })
         );
