@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Dividend, Prisma } from "@prisma/client";
 import { ADToBS } from "bikram-sambat-js";
 import { DataTable } from "./table/data-table";
+import DeleteDividendEntryDialog from "./deleteDividendSingleEntry";
+import { useState } from "react";
 type DividendListFromDbWithShareholder = Prisma.DividendGetPayload<{
   include: { shareholder: true };
 }>;
@@ -21,16 +23,18 @@ export default function DividendHistoryList({
     creditAmount: number;
   };
 
-  const dividendWithShareholderList: DividendWithShareholder[] =
-    dividendListFromDbWithShareholder.map((dividend) => {
-      return {
-        ...dividend,
-        shareholderName: dividend.shareholder.name,
-        shareholderNumber: dividend.shareholder.number,
-        debitAmount: dividend.amount < 0 ? dividend.amount : null,
-        creditAmount: dividend.amount >= 0 ? dividend.amount : null,
-      } as DividendWithShareholder;
-    });
+  const [dividendWithShareholderList, setDividendWithShareholderList] =
+    useState<DividendWithShareholder[]>(
+      dividendListFromDbWithShareholder.map((dividend) => {
+        return {
+          ...dividend,
+          shareholderName: dividend.shareholder.name,
+          shareholderNumber: dividend.shareholder.number,
+          debitAmount: dividend.amount < 0 ? dividend.amount : null,
+          creditAmount: dividend.amount >= 0 ? dividend.amount : null,
+        } as DividendWithShareholder;
+      })
+    );
 
   const columns: ColumnDef<DividendWithShareholder>[] = [
     { accessorKey: "transactionDate", header: "Transaction Date" },
@@ -111,9 +115,30 @@ export default function DividendHistoryList({
       accessorKey: "remarks",
       header: "Remarks",
     },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center gap-2">
+            {/* Add any action buttons here, e.g., edit, delete */}
+            <DeleteDividendEntryDialog
+              dividendToDelete={row.original}
+              onSuccess={() =>
+                setDividendWithShareholderList(
+                  dividendWithShareholderList.filter(
+                    (div) => div.id !== row.original.id
+                  )
+                )
+              }
+            />
+          </div>
+        );
+      },
+    },
   ];
   const exportHeaderName = [
-    "TransactionDate",
+    "Transaction Date",
     "Date BS",
     "Shareholder Name",
     "Shareholder Number",
@@ -124,6 +149,7 @@ export default function DividendHistoryList({
     "Receiver Bank",
     "Receiver Bank Account",
     "Remarks",
+    "Action",
   ];
   return (
     <div className="">
