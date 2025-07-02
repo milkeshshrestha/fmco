@@ -23,14 +23,14 @@ export default async function createSingleDividend(
   });
 
   // Update the shareholder's dividend balance
-  await prisma.shareholder.update({
-    where: { id: sh.id },
-    data: {
-      dividendBalance: {
-        increment: parseFloat(dividendForDb.amount.toFixed(2)),
-      },
-    },
-  });
+  // await prisma.shareholder.update({
+  //   where: { id: sh.id },
+  //   data: {
+  //     dividendBalance: {
+  //       increment: parseFloat(dividendForDb.amount.toFixed(2)),
+  //     },
+  //   },
+  // });
 
   return { success: true, message: "Dividend entry created successfully" };
 }

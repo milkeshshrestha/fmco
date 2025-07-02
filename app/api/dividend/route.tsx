@@ -109,8 +109,8 @@ export async function POST(request: NextRequest, res: NextResponse) {
           nf.push(
             dividendFromExcel.shareholderNumber + " at SNo. " + (index + 1)
           );
-        if (sh)
-          sh.dividendBalance += parseFloat(dividendFromExcel.amount.toFixed(2));
+        // if (sh)
+        //   sh.dividendBalance += parseFloat(dividendFromExcel.amount.toFixed(2));
       });
       if (nf.length > 0)
         errorRows.push("Shareholders not found for number:" + nf.join(", "));
@@ -145,16 +145,16 @@ export async function POST(request: NextRequest, res: NextResponse) {
     });
     //console.log(shareholdersFromDb);
     //await prisma.shareholder.updateMany({ data: shareholdersFromDb });
-    await prisma.$transaction(
-      shareholdersFromDb.map((updatedSh) =>
-        prisma.shareholder.update({
-          where: { id: updatedSh.id },
-          data: {
-            dividendBalance: updatedSh.dividendBalance,
-          },
-        })
-      )
-    );
+    // await prisma.$transaction(
+    //   shareholdersFromDb.map((updatedSh) =>
+    //     prisma.shareholder.update({
+    //       where: { id: updatedSh.id },
+    //       data: {
+    //         dividendBalance: updatedSh.dividendBalance,
+    //       },
+    //     })
+    //   )
+    // );
 
     message =
       "Saved " + rows.length + " number of rows to database successfully";

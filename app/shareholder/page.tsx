@@ -80,18 +80,18 @@ export default function ShareholdersTable() {
         return cellValue == value.toLowerCase();
       },
     },
-    {
-      accessorKey: "dividendBalance",
-      header: "Unpaid Dividend",
-      cell: ({ row }) => (
-        <div className="text-right">{row.getValue("dividendBalance")}</div>
-      ),
-      filterFn: (row, columnId, value) => {
-        //filter input box is string, so we convert value to string
-        const cellValue = String(row.getValue(columnId));
-        return cellValue == value;
-      },
-    },
+    // {
+    //   accessorKey: "dividendBalance",
+    //   header: "Unpaid Dividend",
+    //   cell: ({ row }) => (
+    //     <div className="text-right">{row.getValue("dividendBalance")}</div>
+    //   ),
+    //   filterFn: (row, columnId, value) => {
+    //     //filter input box is string, so we convert value to string
+    //     const cellValue = String(row.getValue(columnId));
+    //     return cellValue == value;
+    //   },
+    // },
     {
       accessorKey: "wacc",
       header: "Wacc",
@@ -133,7 +133,7 @@ export default function ShareholdersTable() {
     "grandfatherName",
     "contact",
     "ownedUnitsOfShare",
-    "dividendBalance",
+    //"dividendBalance",
     "wacc",
   ]; // Replace with actual column keys
 
@@ -147,7 +147,7 @@ export default function ShareholdersTable() {
     "Grandfather Name",
     "Contact",
     "Units owned",
-    "Unpaid Dividend",
+    //"Unpaid Dividend",
     "Wacc",
   ];
   return (
