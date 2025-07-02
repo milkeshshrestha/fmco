@@ -58,14 +58,6 @@ export default function SharePage() {
       header: "Remarks",
     },
   ];
-  const columnsToExport = [
-    "name",
-    "number",
-    "ownershipType",
-    "ownershipDate",
-    "unitsOfShare",
-    "remarks",
-  ]; // Replace with actual column keys
 
   const exportHeaderName = [
     "Name",
@@ -83,7 +75,6 @@ export default function SharePage() {
         exportHeaderNames={exportHeaderName}
         exportFileName="Remaining Share"
         title="Remaining Share"
-        columnsToExport={columnsToExport}
       />
     </div>
   );

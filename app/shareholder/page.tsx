@@ -124,18 +124,6 @@ export default function ShareholdersTable() {
       ),
     },
   ];
-  const columnsToExport = [
-    "name",
-    "type",
-    "number",
-    "ctzIssueDateOrRegDate",
-    "fatherName",
-    "grandfatherName",
-    "contact",
-    "ownedUnitsOfShare",
-    //"dividendBalance",
-    "wacc",
-  ]; // Replace with actual column keys
 
   const exportHeaderName = [
     "Full Name",
@@ -158,7 +146,6 @@ export default function ShareholdersTable() {
         exportHeaderNames={exportHeaderName}
         exportFileName="Shareholder list"
         title="Shareholder List"
-        columnsToExport={columnsToExport}
       />
     </div>
   );

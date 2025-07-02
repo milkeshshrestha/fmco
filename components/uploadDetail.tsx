@@ -71,15 +71,6 @@ export default function UploadedSharesDetailComponent({
       header: "Remarks",
     },
   ];
-  const columnsToExport = [
-    "name",
-    "number",
-    "ownershipType",
-    "transactionDate",
-    "unitsOfShareChanged",
-    "ratePerShare",
-    "remarks",
-  ];
 
   const exportHeaderName = [
     "Name",
@@ -98,7 +89,6 @@ export default function UploadedSharesDetailComponent({
         exportHeaderNames={exportHeaderName}
         exportFileName="Upload Detail"
         title="Upload Detail"
-        columnsToExport={columnsToExport}
       />
     </div>
   );

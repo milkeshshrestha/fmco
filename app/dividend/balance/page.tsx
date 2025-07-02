@@ -15,7 +15,9 @@ export default function ShareholdersTable() {
 
   useEffect(() => {
     const loadShareholderData = async () => {
-      setShareholderList(await getAllShareholdersWithDividend());
+      const shList = await getAllShareholdersWithDividend();
+      setShareholderList(shList);
+      console.log("Shareholder List:", shList);
     };
     loadShareholderData();
   }, []);
@@ -73,15 +75,6 @@ export default function ShareholdersTable() {
       },
     },
   ];
-  const columnsToExport = [
-    "name",
-    "number",
-    "fatherName",
-    "bankName",
-    "bankAccount",
-    "contact",
-    "dividendBalance",
-  ]; // Replace with actual column keys
 
   const exportHeaderName = [
     "Full Name",
@@ -100,7 +93,6 @@ export default function ShareholdersTable() {
         exportHeaderNames={exportHeaderName}
         exportFileName="Dividend balance list"
         title="Dividend Balance List"
-        columnsToExport={columnsToExport}
       />
     </div>
   );

@@ -54,7 +54,7 @@ model Dividend {
   receivingBankName String?
   receivingBankAccount String?
   dividendUploadHistoryId Int?
-  dividendUploadHistory DividendUploadHistory? @relation(fields: [dividendUploadHistoryId], references: [id],onDelete: Cascade)
+  dividendUploadHistory DividendUploadHistory? @relation(fields: [dividendUploadHistoryId], references: [id])
   remarks String
   entryDate DateTime @default(now())
 }

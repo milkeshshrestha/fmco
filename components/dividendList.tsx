@@ -30,7 +30,7 @@ export default function DividendHistoryList({
           ...dividend,
           shareholderName: dividend.shareholder.name,
           shareholderNumber: dividend.shareholder.number,
-          debitAmount: dividend.amount < 0 ? dividend.amount : null,
+          debitAmount: dividend.amount < 0 ? -dividend.amount : null,
           creditAmount: dividend.amount >= 0 ? dividend.amount : null,
         } as DividendWithShareholder;
       })

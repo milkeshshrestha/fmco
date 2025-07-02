@@ -3,6 +3,7 @@ import * as XLSX from "xlsx";
 import {
   ColumnDef,
   ColumnFiltersState,
+  FilterFn,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -30,16 +31,20 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   exportHeaderNames: string[];
-  columnsToExport: string[];
   exportFileName: string;
   title: string;
 }
+export const numericFilter: FilterFn<any> = (row, columnId, filterValue) => {
+  const value = row.getValue(columnId);
+  // If no filter value, show all rows
+  if (!filterValue || !value) return true;
+  return value.toString().includes(filterValue.toString());
+};
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   exportHeaderNames,
-  columnsToExport,
   exportFileName,
   title,
 }: DataTableProps<TData, TValue>) {
@@ -59,23 +64,24 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+  // function getNestedValue<T>(obj: T, path: string) {
+  //   return path.split(".").reduce((acc: any, key: string) => acc?.[key], obj);
+  // }
   const exportToExcel = () => {
-    // Define the keys of the columns you want to export
-    //const columnsToExport = ["columnKey1", "columnKey2", "columnKey3"]; // Replace with actual column keys
-
     // Filter the rows to include only the specified columns
-    const filteredRows = table.getFilteredRowModel().rows.map((row) => {
-      const originalRow = row.original;
-      const filteredRow: Record<string, any> = {};
-      columnsToExport.forEach((key) => {
-        filteredRow[key] = originalRow[key as keyof TData];
-      });
-      return filteredRow;
-    });
-    // const filteredRows = table
-    //   .getFilteredRowModel()
-    //   .rows.map((row) => row.original);
-    //console.log(filteredRows);
+    const filteredRows = table.getFilteredRowModel().rows.map((row) =>
+      // Object.fromEntries(
+      //   columnsToExport.map((key) => [key, row.getValue(key)])
+      // )
+      {
+        const rowData: any = {};
+        row.getVisibleCells().reduce((acc, cell) => {
+          rowData[cell.column.id] = cell.getValue();
+        }, rowData);
+        return rowData;
+      }
+    );
+
     // Step 1: Create a new workbook and a worksheet
     const ws = XLSX.utils.json_to_sheet(filteredRows);
     //rename header rows
@@ -139,7 +145,7 @@ export function DataTable<TData, TValue>({
                       </Button>
                       <Input
                         placeholder="..."
-                        value={(header.column.getFilterValue() as string) ?? ""}
+                        value={header.column.getFilterValue()?.toString() ?? ""}
                         onChange={(event) =>
                           header.column.setFilterValue(event.target.value)
                         }
@@ -181,7 +187,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="space-x-2 py-4">
         <DataTablePagination table={table}></DataTablePagination>
       </div>
     </div>

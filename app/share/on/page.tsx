@@ -53,12 +53,6 @@ const columns: ColumnDef<MappedShareData>[] = [
     ),
   },
 ];
-const columnsToExport = [
-  "name",
-  "number",
-  "ownedUnitsOfShare",
-  "lastTransactionDate",
-]; // Replace with actual column keys
 
 const exportHeaderName = [
   "Full Name",
@@ -111,7 +105,6 @@ export default function ShareAsOnDatePage() {
               <DataTable
                 data={mappedShareData}
                 columns={columns}
-                columnsToExport={columnsToExport}
                 exportFileName={`Shares on ${date}`}
                 exportHeaderNames={exportHeaderName}
                 title={`Shares on ${date}`}
