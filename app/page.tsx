@@ -23,8 +23,8 @@ export default async function Home() {
   const numberOfShares = await prisma.shareholder.aggregate({
     _sum: { ownedUnitsOfShare: true },
   });
-  const dividendBalance = await prisma.shareholder.aggregate({
-    _sum: { dividendBalance: true },
+  const dividendBalance = await prisma.dividend.aggregate({
+    _sum: { amount: true },
   });
   const numberOfShareHolders = await prisma.shareholder.count({
     where: { ownedUnitsOfShare: { gt: 0 } },
@@ -32,6 +32,7 @@ export default async function Home() {
   const topShareholders = await prisma.shareholder.findMany({
     orderBy: { ownedUnitsOfShare: "desc" },
     take: 10,
+    include: { dividend: true },
   });
   return (
     <div className="space-y-6">
@@ -68,9 +69,7 @@ export default async function Home() {
           <CardHeader>
             <CardDescription>Unpaid Dividend</CardDescription>
             <CardTitle className="text-2xl font-semibold ">
-              {new Intl.NumberFormat().format(
-                dividendBalance._sum.dividendBalance ?? 0
-              )}
+              {new Intl.NumberFormat().format(dividendBalance._sum.amount ?? 0)}
             </CardTitle>
             <CardAction>
               <Link href={"/dividend/balance"}>
@@ -108,7 +107,12 @@ export default async function Home() {
                         <TableCell>{sh.ctzIssueDateOrRegDate}</TableCell>
                         <TableCell>{sh.ownedUnitsOfShare}</TableCell>
                         <TableCell className="text-right">
-                          {Intl.NumberFormat().format(sh.dividendBalance)}
+                          {Intl.NumberFormat().format(
+                            sh.dividend.reduce(
+                              (acc, div) => acc + div.amount,
+                              0
+                            )
+                          )}
                         </TableCell>
                         <TableCell>
                           {Intl.NumberFormat().format(

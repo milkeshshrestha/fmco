@@ -66,7 +66,6 @@ export async function POST(request: NextRequest, res: NextResponse) {
       throw new Error();
     }
 
-    let foundShareholders: Shareholder[] = [];
     // Validate each row against the schema
     var errorRows: any = [];
     let validatedDataFromExcel: DividendDataFromExcel[] = [];
@@ -144,21 +143,18 @@ export async function POST(request: NextRequest, res: NextResponse) {
         dividend: { createMany: { data: dividendListToSave } },
       },
     });
-    await prisma.shareholder.updateMany({ data: foundShareholders });
-    // await prisma.$transaction(
-    //   shareholdersFromDb.map((updatedSh) =>
-    //     prisma.shareholder.update({
-    //       where: { id: updatedSh.id },
-    //       data: {
-    //         dividendBalance: {
-    //           increment: dividendListToSave
-    //             .filter((div) => div.shareholderId == updatedSh.id)
-    //             .reduce((acc, curr) => acc + curr.amount, 0),
-    //         },
-    //       },
-    //     })
-    //   )
-    // );
+    //console.log(shareholdersFromDb);
+    //await prisma.shareholder.updateMany({ data: shareholdersFromDb });
+    await prisma.$transaction(
+      shareholdersFromDb.map((updatedSh) =>
+        prisma.shareholder.update({
+          where: { id: updatedSh.id },
+          data: {
+            dividendBalance: updatedSh.dividendBalance,
+          },
+        })
+      )
+    );
 
     message =
       "Saved " + rows.length + " number of rows to database successfully";

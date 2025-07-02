@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAllDividendUploadList } from "@/data/dividend";
 import { DividendUploadHistory } from "@prisma/client";
+import DeleteDividendUploadDialog from "@/components/deleteDividendUpload";
+import { Button } from "@/components/ui/button";
 
 export default function DividendUploadHistoryPage() {
   const [dividendUploadHistory, setDividendUploadHistory] =
@@ -57,12 +59,21 @@ export default function DividendUploadHistoryPage() {
                     <TableCell>{uploadhistory.dividendUploadType}</TableCell>
                     <TableCell>{uploadhistory.remarks}</TableCell>
                     <TableCell>
-                      <Link
-                        href={`upload/${uploadhistory.id}`}
-                        className="border px-2 py-1 rounded-md"
-                      >
-                        View
-                      </Link>
+                      <div className="flex gap-2">
+                        <Button variant={"outline"} asChild>
+                          <Link href={`upload/${uploadhistory.id}`}>View</Link>
+                        </Button>
+                        <DeleteDividendUploadDialog
+                          dividendUploadHistory={uploadhistory}
+                          onSuccess={() => {
+                            setDividendUploadHistory((prev) =>
+                              prev?.filter(
+                                (item) => item.id !== uploadhistory.id
+                              )
+                            );
+                          }}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

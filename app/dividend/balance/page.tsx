@@ -1,21 +1,26 @@
 "use client";
-import { getAllShareholders } from "@/data/sharedholderData";
+import { getAllShareholdersWithDividend } from "@/data/sharedholderData";
 import { ColumnDef } from "@tanstack/react-table";
-import { Shareholder } from "@prisma/client";
+import { Dividend, Prisma, Shareholder } from "@prisma/client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/table/data-table";
-
+type ShareholderWithDividend = Prisma.ShareholderGetPayload<{
+  include: { dividend: true };
+}>;
 export default function ShareholdersTable() {
-  const [shareholderList, setShareholderList] = useState<Shareholder[]>([]);
+  const [shareholderList, setShareholderList] = useState<
+    ShareholderWithDividend[]
+  >([]);
 
   useEffect(() => {
     const loadShareholderData = async () => {
-      setShareholderList(await getAllShareholders());
+      setShareholderList(await getAllShareholdersWithDividend());
     };
     loadShareholderData();
   }, []);
-  const columns: ColumnDef<Shareholder>[] = [
+
+  const columns: ColumnDef<ShareholderWithDividend>[] = [
     {
       accessorKey: "name",
       header: "Full Name",
@@ -46,16 +51,21 @@ export default function ShareholdersTable() {
       header: "Account Number",
     },
     {
-      accessorKey: "dividendBalance",
+      //accessorKey: "dividendBalance",
       header: "Unpaid Dividend",
-      cell: ({ row }) => (
-        <div className="text-right">
-          {Number(row.getValue("dividendBalance")).toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </div>
-      ),
+      id: "unpaidDividend",
+      accessorFn: ({ dividend }) => {
+        const dividends = dividend ?? [];
+        const total = dividends.reduce((acc, div) => acc + div.amount, 0);
+        return total;
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="text-right">
+            {new Intl.NumberFormat().format(row.getValue("unpaidDividend"))}
+          </div>
+        );
+      },
       filterFn: (row, columnId, value) => {
         //filter input box is string, so we convert value to string
         const cellValue = String(row.getValue(columnId));
