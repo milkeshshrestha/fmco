@@ -6,13 +6,13 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoaderCircleIcon } from "lucide-react";
-import { getTransactionSummaryBySecurityAndDateWithClassification } from "@/data/trade";
-import { DataTable } from "@/components/table/data-table";
 import {
-  getSecurityBalanceWithClassification,
-  getTransactionResultBySecurityAndDateWithClassification,
-  SecurityBalanceWithClassification,
-} from "@/services/transactionDetail";
+  DataTable,
+  getNumberFormattedWithDiv,
+} from "@/components/table/data-table";
+import { SecurityBalanceWithClassification } from "@/services/transactionDetail";
+import { toast } from "sonner";
+import { getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData } from "@/data/getSecurityDetail";
 
 export default function BalanceSecurityPage() {
   const columns: ColumnDef<SecurityBalanceWithClassification>[] = [
@@ -22,9 +22,46 @@ export default function BalanceSecurityPage() {
       accessorKey: "securityClassificationAsPerNFRS",
       header: "Classification",
     },
-    { accessorKey: "remainingQuantity", header: "Remaining Qty" },
-    { accessorKey: "remainingCost", header: "Cost of Remaining Qty" },
-    { accessorKey: "wacc", header: "Closing WACC" },
+    {
+      accessorKey: "remainingQuantity",
+      header: "Remaining Qty",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "remainingCost",
+      header: "Cost of Remaining Qty",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.remainingCost, 0);
+        return getNumberFormattedWithDiv(total);
+      },
+    },
+    {
+      accessorKey: "wacc",
+      header: "Closing WACC",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "closingMarketRate",
+      header: "Closing Market Rate",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "closingMarketValue",
+      header: "Closing Market Value",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce(
+            (sum, row) => sum + (row.original.closingMarketValue ?? 0),
+            0
+          );
+        return getNumberFormattedWithDiv(total);
+      },
+    },
   ];
   const exportHeaderName = [
     "Name",
@@ -33,6 +70,8 @@ export default function BalanceSecurityPage() {
     "Remaining Qty",
     "Cost of Remaining Qty",
     "Closing WACC",
+    "Closing Market Rate",
+    "Closing Market Value",
   ];
   const [data, setData] = useState<SecurityBalanceWithClassification[]>([]);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -43,15 +82,17 @@ export default function BalanceSecurityPage() {
   const onClickHandler = async () => {
     setLoading(true);
     setShowTable(false);
-    const transactionDetail =
-      await getTransactionSummaryBySecurityAndDateWithClassification(toDate);
-    const resultAfterCostCalc =
-      getTransactionResultBySecurityAndDateWithClassification(
-        transactionDetail
-      );
 
-    const grouped = getSecurityBalanceWithClassification(resultAfterCostCalc);
-    setData(grouped);
+    const response =
+      await getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
+        new Date(toDate)
+      );
+    if (!response.success) {
+      toast.error(response.message);
+      setData(response.data);
+    } else {
+      setData(response.data);
+    }
     //console.log("grouped", grouped);
     setLoading(false);
     setShowTable(true);

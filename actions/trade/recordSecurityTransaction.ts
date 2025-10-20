@@ -56,5 +56,6 @@ export const saveSecurityTransaction = async (
   await prisma.securityTransactionDetail.createMany({
     data: transactionDataForDb,
   });
+  return { success: true, message: "Record saved successfully" };
 };
 //const savedRecord = prisma.securityTransaction.create({data:})

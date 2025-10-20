@@ -7,54 +7,123 @@ import { ADToBS, BSToAD } from "bikram-sambat-js";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoaderCircleIcon } from "lucide-react";
-import { getTransactionSummaryBySecurityAndDateWithClassification } from "@/data/trade";
-import { DataTable } from "@/components/table/data-table";
 import {
-  getTransactionResultBySecurityAndDateWithClassification,
-  getTransactionResultGroupedBySecurityWithClassification,
-  TransactionResultBySecurityWithClassification,
-} from "@/services/transactionDetail";
+  DataTable,
+  getNumberFormattedWithDiv,
+} from "@/components/table/data-table";
+
+import {
+  calculateNfrsGainForSecurityAsOnDate,
+  NfrsGainDetail,
+} from "@/data/getSecurityDetail";
 
 export default function TradeSecuritySummaryBySecurityPage() {
-  const columns: ColumnDef<TransactionResultBySecurityWithClassification>[] = [
-    { accessorKey: "securityName", header: "Name" },
-    { accessorKey: "securityShortName", header: "Short Name" },
+  const columns: ColumnDef<NfrsGainDetail>[] = [
+    { accessorKey: "name", header: "Name" },
+    { accessorKey: "shortName", header: "Short Name" },
     {
       accessorKey: "securityClassificationAsPerNFRS",
       header: "Classification",
     },
-    { accessorKey: "additionQuantity", header: "Purchase Quantity" },
-    { accessorKey: "additionAmount", header: "Cost of Purchase" },
-    { accessorKey: "salesQuantity", header: "Sold Quantity" },
-    { accessorKey: "salesAmount", header: "Sales Revenue" },
-    { accessorKey: "gain", header: "Gain (loss)" },
-    { accessorKey: "remainingQuantity", header: "Remaining Qty" },
-    { accessorKey: "remainingCost", header: "Cost of Remaining Qty" },
-    { accessorKey: "wacc", header: "Closing WACC" },
+
+    {
+      accessorKey: "openingQuantity",
+      header: "Opening Quantity",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "openingAmount",
+      header: "Opening Market Value",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.openingAmount, 0);
+        return getNumberFormattedWithDiv(total);
+      },
+    },
+    {
+      accessorKey: "purchaseQuantity",
+      header: "Purchase Quantity",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "purchaseAmount",
+      header: "Purchase Cost",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.purchaseAmount, 0);
+        return getNumberFormattedWithDiv(total);
+      },
+    },
+    {
+      accessorKey: "soldQuantity",
+      header: "Sold Quantity",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "soldAmount",
+      header: "Sold Value",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.soldAmount, 0);
+        return getNumberFormattedWithDiv(total);
+      },
+    },
+    {
+      accessorKey: "closingQuantity",
+      header: "Closing Quantity",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "closingAmount",
+      header: "Closing Market Value",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.openingAmount, 0);
+        return getNumberFormattedWithDiv(total);
+      },
+    },
+    {
+      accessorKey: "gain",
+      header: "Gain (loss)",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.gain, 0);
+        return getNumberFormattedWithDiv(total);
+      },
+    },
   ];
   const exportHeaderName = [
     "Name",
     "Short Name",
     "Classification",
+    "Opening Quantity",
+    "Opening Market Value",
     "Purchase Quantity",
-    "Cost of Purchase",
+    "Purchase Cost",
     "Sold Quantity",
-    "Sales revenue",
+    "Sales Value",
+    "Closing Quantity",
+    "Closing Market Value",
     "Gain (Loss)",
-    "Remaining Qty",
-    "Cost of Remaining Qty",
-    "Closing WACC",
   ];
   const todayBSDate = ADToBS(new Date());
   const todayBSMonth = Number(todayBSDate.split("-")[1]);
   const fyStartDate = BSToAD(
     todayBSMonth > 3
-      ? todayBSDate.split("-")[0]
+      ? todayBSDate.split("-")[0] + "-04-01"
       : Number(todayBSDate.split("-")[0]) - 1 + "-04-01"
   );
-  const [data, setData] = useState<
-    TransactionResultBySecurityWithClassification[]
-  >([]);
+  const [data, setData] = useState<NfrsGainDetail[]>([]);
   const [fromDate, setFromDate] = useState<string>(fyStartDate);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [toDate, setToDate] = useState<string>(
@@ -64,21 +133,20 @@ export default function TradeSecuritySummaryBySecurityPage() {
   const onClickHandler = async () => {
     setLoading(true);
     setShowTable(false);
-    const transactionDetail =
-      await getTransactionSummaryBySecurityAndDateWithClassification(toDate);
-    const resultAfterCostCalc =
-      getTransactionResultBySecurityAndDateWithClassification(
-        transactionDetail
-      );
-    //console.log("transaction", transactionDetail);
-
-    const filteredForDate = resultAfterCostCalc.filter(
-      (s) => s.transactionDate >= fromDate
+    const data = await calculateNfrsGainForSecurityAsOnDate(
+      new Date(fromDate),
+      new Date(toDate)
     );
-
-    const grouped =
-      getTransactionResultGroupedBySecurityWithClassification(filteredForDate);
-    setData(grouped);
+    data.sort((a, b) =>
+      b.name > a.name
+        ? -1
+        : b.name === a.name
+        ? b.securityClassificationAsPerNFRS > a.securityClassificationAsPerNFRS
+          ? 1
+          : -1
+        : 1
+    );
+    setData(data);
     //console.log("grouped", grouped);
     setLoading(false);
     setShowTable(true);

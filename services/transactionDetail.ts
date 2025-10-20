@@ -1,4 +1,5 @@
 export type TransactionSummaryBySecurityAndDateWithClassification = {
+  securityId: number;
   securityName: string;
   securityShortName: string;
   securityClassificationAsPerNFRS: string;
@@ -14,6 +15,7 @@ export type TransactionSummaryBySecurityAndDateWithoutClassification = Omit<
 >;
 
 export type TransactionResultBySecurityAndDateWithClassification = {
+  securityId: number;
   securityName: string;
   securityShortName: string;
   securityClassificationAsPerNFRS: string;
@@ -47,14 +49,18 @@ export type SecutiyBalanceWithoutClassification = Omit<
   "securityClassificationAsPerNFRS"
 >;
 export type SecurityBalanceWithClassification = {
+  securityId: number;
   securityName: string;
   securityShortName: string;
   securityClassificationAsPerNFRS: string;
   remainingCost: number;
   remainingQuantity: number;
   wacc: number;
+  closingMarketRate?: number;
+  closingMarketValue?: number;
 };
 export type SecurityBalanceWithoutClassification = {
+  securityId: number;
   securityName: string;
   securityShortName: string;
   remainingCost: number;
@@ -65,6 +71,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
   transactionDetail: TransactionSummaryBySecurityAndDateWithClassification[]
 ) => {
   let prevRecord: {
+    securityId: number;
     securityShortName: string;
     securityClassificationAsPerNFRS: string;
     remainingQuantity: number;
@@ -83,6 +90,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
           ? security.additionAmount / security.additionQuantity
           : 0;
       prevRecord = {
+        securityId: security.securityId,
         securityShortName: security.securityShortName,
         securityClassificationAsPerNFRS:
           security.securityClassificationAsPerNFRS,
@@ -128,6 +136,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
             : null,
       };
       prevRecord = {
+        securityId: security.securityId,
         securityShortName: security.securityShortName,
         securityClassificationAsPerNFRS:
           security.securityClassificationAsPerNFRS,
@@ -144,6 +153,7 @@ export const getTransactionResultBySecurityAndDateWithoutClassification = (
   transactionDetail: TransactionSummaryBySecurityAndDateWithoutClassification[]
 ) => {
   let prevRecord: {
+    securityId: number;
     securityShortName: string;
     remainingQuantity: number;
     remainingCost: number;
@@ -159,6 +169,7 @@ export const getTransactionResultBySecurityAndDateWithoutClassification = (
           ? security.additionAmount / security.additionQuantity
           : 0;
       prevRecord = {
+        securityId: security.securityId,
         securityShortName: security.securityShortName,
         remainingQuantity: security.additionQuantity - security.salesQuantity,
         remainingCost:
@@ -202,6 +213,7 @@ export const getTransactionResultBySecurityAndDateWithoutClassification = (
             : null,
       };
       prevRecord = {
+        securityId: security.securityId,
         securityShortName: security.securityShortName,
         remainingCost: remainingCost,
         remainingQuantity: remainingSecurityAtEnd,
@@ -269,6 +281,7 @@ export const getSecurityBalanceWithClassification = (
       const key = `${item.securityShortName}-${item.securityClassificationAsPerNFRS}`;
       if (!acc[key]) {
         acc[key] = {
+          securityId: item.securityId,
           securityName: item.securityName,
           securityShortName: item.securityShortName,
           securityClassificationAsPerNFRS: item.securityClassificationAsPerNFRS,
@@ -295,6 +308,7 @@ export const getSecurityBalanceWithoutClassification = (
       const key = `${item.securityShortName}`;
       if (!acc[key]) {
         acc[key] = {
+          securityId: item.securityId,
           securityName: item.securityName,
           securityShortName: item.securityShortName,
           remainingCost: item.remainingCost,

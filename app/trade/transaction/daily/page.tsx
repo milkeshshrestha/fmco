@@ -210,7 +210,7 @@ export default function DailyTransactionPage() {
         .sort((a, b) => a.index - b.index)
     );
   }, [transactionData]);
-  const saveButtonClickHandler = () => {
+  const saveButtonClickHandler = async () => {
     if (!transactionDate) {
       toast.error("Select transaction date first");
       return;
@@ -223,7 +223,10 @@ export default function DailyTransactionPage() {
       transactionDate: new Date(transactionDate),
       transactionDetail: transactionData,
     };
-    const response = saveSecurityTransaction(data);
+    const response = await saveSecurityTransaction(data);
+    if (response.success) {
+      toast.success(response.message);
+    }
   };
   return (
     <div className="space-y-4">

@@ -71,6 +71,7 @@ group by st."transactionDate" order by st."transactionDate"
   return result;
 }
 export type TransactionSummaryBySecurityWithClassification = {
+  securityId: number;
   securityName: string;
   securityShortName: string;
   securityClassificationAsPerNFRS: string;
@@ -87,7 +88,7 @@ export async function getTransactionSummaryBySecurityWithClassification(
     TransactionSummaryBySecurityWithClassification[]
   >(
     `
-  SELECT s."name" as "securityName", s."shortName" as "securityShortName" , sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS",
+  SELECT s."id" as "securityId", s."name" as "securityName", s."shortName" as "securityShortName" , sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS",
   sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" END) AS "additionQuantity",
   sum(CASE WHEN sd.quantity <= 0 THEN sd."quantity" END) AS "salesQuantity",
   sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" END) AS "additionAmount",
@@ -95,7 +96,7 @@ export async function getTransactionSummaryBySecurityWithClassification(
 FROM public."SecurityTransaction" as st 
 join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" 
 join "Security" as s on s.id= sd."securityId" where st."transactionDate">=$1 and st."transactionDate"<=$2
-group by s.name,s."shortName",sd."securityClassificationAsPerNFRS" order by s."name", sd."securityClassificationAsPerNFRS"
+group by s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS" order by s."name", sd."securityClassificationAsPerNFRS"
   `,
     fromDate,
     toDate
@@ -110,7 +111,7 @@ export async function getTransactionSummaryBySecurityAndDateWithClassification(
     TransactionSummaryBySecurityAndDateWithClassification[]
   >(
     `
-  SELECT s."name" as "securityName", s."shortName" as "securityShortName",sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS", st."transactionDate",
+  SELECT s."id" as "securityId", s."name" as "securityName", s."shortName" as "securityShortName",sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS", st."transactionDate",
   COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" END),0) AS "additionQuantity",
   COALESCE(sum(CASE WHEN sd.quantity <= 0 THEN -sd."quantity" END),0) AS "salesQuantity",
   COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" END),0) AS "additionAmount",
@@ -118,7 +119,7 @@ export async function getTransactionSummaryBySecurityAndDateWithClassification(
 FROM public."SecurityTransaction" as st 
 join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" 
 join "Security" as s on s.id= sd."securityId" where  st."transactionDate"<=$1
-group by s.name,s."shortName",sd."securityClassificationAsPerNFRS" ,st."transactionDate" order by s."name" asc,sd."securityClassificationAsPerNFRS" asc, st."transactionDate" asc
+group by s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS" ,st."transactionDate" order by s."name" asc,sd."securityClassificationAsPerNFRS" asc, st."transactionDate" asc
   `,
     toDate
   );
@@ -132,7 +133,7 @@ export async function getTransactionSummaryBySecurityAndDateWithoutClassificatio
     TransactionSummaryBySecurityAndDateWithoutClassification[]
   >(
     `
-  SELECT s."name" as "securityName", s."shortName" as "securityShortName", st."transactionDate",
+  SELECT s."id" as "securityId", s."name" as "securityName", s."shortName" as "securityShortName", st."transactionDate",
   COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" END),0) AS "additionQuantity",
   COALESCE(sum(CASE WHEN sd.quantity <= 0 THEN -sd."quantity" END),0) AS "salesQuantity",
   COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" END),0) AS "additionAmount",
@@ -140,7 +141,7 @@ export async function getTransactionSummaryBySecurityAndDateWithoutClassificatio
 FROM public."SecurityTransaction" as st 
 join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" 
 join "Security" as s on s.id= sd."securityId" where  st."transactionDate"<=$1
-group by s.name,s."shortName" ,st."transactionDate" order by s."name" asc, st."transactionDate" asc
+group by s.id, s.name, s."shortName" ,st."transactionDate" order by s."name" asc, st."transactionDate" asc
   `,
     toDate
   );

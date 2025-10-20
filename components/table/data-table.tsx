@@ -17,6 +17,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -24,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, Loader } from "lucide-react";
 import { DataTablePagination } from "./pagination";
 
 interface DataTableProps<TData, TValue> {
@@ -38,7 +39,7 @@ export const numericFilter: FilterFn<any> = (row, columnId, filterValue) => {
   const value = row.getValue(columnId);
   // If no filter value, show all rows
   if (!filterValue || !value) return true;
-  return value.toString() === filterValue.toString();
+  return value.toString().includes(filterValue.toString());
 };
 
 export function DataTable<TData, TValue>({
@@ -64,18 +65,20 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
-  function getNestedValue<T>(obj: T, path: string) {
-    return path.split(".").reduce((acc: any, key: string) => acc?.[key], obj);
-  }
+  // function getNestedValue<T>(obj: T, path: string) {
+  //   return path.split(".").reduce((acc: any, key: string) => acc?.[key], obj);
+  // }
+  const [isPendingExcelExport, setIsPendingExcelExport] =
+    useState<boolean>(false);
   const exportToExcel = () => {
+    setIsPendingExcelExport(true);
     // Filter the rows to include only the specified columns
     const filteredRows = table.getFilteredRowModel().rows.map((row) =>
       // Object.fromEntries(
       //   columnsToExport.map((key) => [key, row.getValue(key)])
       // )
       {
-        let rowData: any = {};
-        console.log(rowData);
+        const rowData: any = {};
         row.getVisibleCells().reduce((acc, cell) => {
           rowData[cell.column.id] = cell.getValue();
         }, rowData);
@@ -101,6 +104,7 @@ export function DataTable<TData, TValue>({
     a.download = exportFileName + ".xlsx";
     a.click();
     URL.revokeObjectURL(url);
+    setIsPendingExcelExport(false);
   };
 
   return (
@@ -108,9 +112,15 @@ export function DataTable<TData, TValue>({
       <div className="">
         <div className="flex justify-between">
           <h2 className="text-lg font-semibold">{title}</h2>
-          <Button onClick={exportToExcel} size={"sm"}>
-            Export to excel
+          <Button
+            onClick={exportToExcel}
+            size={"sm"}
+            disabled={isPendingExcelExport}
+          >
+            Export to excel{" "}
+            {isPendingExcelExport && <Loader className="animate-spin" />}
           </Button>
+          {isPendingExcelExport}
         </div>
       </div>
 
@@ -186,11 +196,36 @@ export function DataTable<TData, TValue>({
               </TableRow>
             )}
           </TableBody>
+          <TableFooter>
+            {table.getFooterGroups().map((footerGroup) => (
+              <TableRow key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <TableCell key={header.id} className="bg-muted">
+                    {flexRender(
+                      header.column.columnDef.footer,
+                      header.getContext()
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableFooter>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="space-x-2 py-4">
         <DataTablePagination table={table}></DataTablePagination>
       </div>
     </div>
   );
 }
+export const getNumberFormattedWithDiv = (
+  value: number,
+  maximumFractionDigits: number = 2
+) => (
+  <div className="text-right">
+    {Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: maximumFractionDigits,
+    }).format(value)}
+  </div>
+);
