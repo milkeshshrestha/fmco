@@ -162,7 +162,7 @@ enum SecurityClassification{
 }
 enum SecurityClassificationAsPerNFRS{
   FVTPL
-  FVOCI
+  FVTOCI
   Amortized_Cost
   Other
 }
