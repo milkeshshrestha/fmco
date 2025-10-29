@@ -189,13 +189,13 @@ export default function DailyTransactionPage() {
   ) => {
     toast("Transaction Record Added");
     const isPurchaseCurrentlySelected = isAdditionTransaction;
-
-    setTransactionData([
+    const newTransactionData = [
       ...transactionData.filter((td) => td.index != data.index),
       { ...data },
-    ]);
+    ];
+    setTransactionData(newTransactionData);
     form.reset();
-    form.setValue("index", transactionData.length + 1);
+    form.setValue("index", newTransactionData.length + 1);
     form.setValue("isAdditionTransaction", isPurchaseCurrentlySelected);
   };
   useEffect(() => {
