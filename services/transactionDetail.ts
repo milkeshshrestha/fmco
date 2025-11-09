@@ -114,7 +114,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
         gain:
           security.salesQuantity > 0
             ? security.salesAmount - wacc * security.salesQuantity
-            : null,
+            : 0,
       };
     } else {
       //purchase affects wacc not sales
@@ -138,7 +138,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
         gain:
           security.salesQuantity > 0
             ? security.salesAmount - wacc * security.salesQuantity
-            : null,
+            : 0,
       };
       prevRecord = {
         securityId: security.securityId,
