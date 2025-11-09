@@ -14,8 +14,11 @@ import {
 
 import {
   calculateNfrsGainForSecurityAsOnDate,
+  calculateNfrsGainForSecurityBetweenDate,
+  getSecurityDetailWithNfrsClassificationAsOnDate,
   NfrsGainDetail,
 } from "@/data/getSecurityDetail";
+import { getClosingPriceForSecurities } from "@/data/marketData";
 
 export default function TradeSecuritySummaryBySecurityPage() {
   const columns: ColumnDef<NfrsGainDetail>[] = [
@@ -145,11 +148,36 @@ export default function TradeSecuritySummaryBySecurityPage() {
   const onClickHandler = async () => {
     setLoading(true);
     setShowTable(false);
-    const data = await calculateNfrsGainForSecurityAsOnDate(
-      new Date(new Date(fromDate).getTime() - 24 * 60 * 60 * 1000),
+    const begDate = new Date(
+      new Date(fromDate).getTime() - 24 * 60 * 60 * 1000
+    );
+    const openingData = await getSecurityDetailWithNfrsClassificationAsOnDate(
+      begDate
+    );
+    const openingMarketData = await getClosingPriceForSecurities(
+      begDate,
+      openingData
+    );
+    console.log("marketData", openingData);
+
+    const closingData = await getSecurityDetailWithNfrsClassificationAsOnDate(
       new Date(toDate)
     );
-    data.sort((a, b) =>
+    const closingMarketData = await getClosingPriceForSecurities(
+      new Date(toDate),
+      closingData
+    );
+    const d = await calculateNfrsGainForSecurityBetweenDate(
+      begDate,
+      openingMarketData,
+      new Date(toDate),
+      closingMarketData
+    );
+    // const data = await calculateNfrsGainForSecurityAsOnDate(
+    //   new Date(new Date(fromDate).getTime() - 24 * 60 * 60 * 1000),
+    //   new Date(toDate)
+    // );
+    d.sort((a, b) =>
       b.name > a.name
         ? -1
         : b.name === a.name
@@ -158,7 +186,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
           : -1
         : 1
     );
-    setData(data);
+    setData(d);
     //console.log("grouped", grouped);
     setLoading(false);
     setShowTable(true);

@@ -3,6 +3,7 @@ import { getTransactionSummaryBySecurityAndDateWithClassification } from "@/data
 import {
   getSecurityBalanceWithClassification,
   getTransactionResultBySecurityAndDateWithClassification,
+  SecurityBalanceWithClassification,
 } from "@/services/transactionDetail";
 import { getClosingPriceForSecurities } from "@/data/marketData";
 
@@ -46,6 +47,102 @@ export type NfrsGainDetail = {
   closingAmount: number;
   gain: number;
 };
+export async function calculateNfrsGainForSecurityBetweenDate(
+  fromDate: Date,
+  beginingPortfolio: {
+    success: boolean;
+    message: string;
+    data: SecurityBalanceWithClassification[];
+  },
+  toDate: Date,
+  endingPortfolio: {
+    success: boolean;
+    message: string;
+    data: SecurityBalanceWithClassification[];
+  }
+): Promise<NfrsGainDetail[]> {
+  //console.log("endingPortfolio", endingPortfolio);
+  const purchaseTransactionSummaryBySecurity =
+    await getSecuritiesPurchasedBetweenDates(fromDate, toDate);
+  // console.log(
+  //   "purchaseTransactionSummaryBySecurity",
+  //   purchaseTransactionSummaryBySecurity
+  // );
+  const soldTransactionSummaryBySecurity = await getSecuritiesSoldBetweenDates(
+    fromDate,
+    toDate
+  );
+  // console.log(
+  //   "soldTransactionSummaryBySecurity",
+  //   soldTransactionSummaryBySecurity
+  // );
+  const securityListRelatedToPeriod = Array.from(
+    new Map(
+      [
+        ...beginingPortfolio.data.map((s) => [
+          s.securityId,
+          s.securityClassificationAsPerNFRS,
+        ]),
+        ...purchaseTransactionSummaryBySecurity.map((s) => [
+          s.securityId,
+          s.securityClassificationAsPerNFRS,
+        ]),
+      ].map((a) => [JSON.stringify(a), a])
+    ).values()
+  );
+
+  //console.log("securityListRelatedToPeriod", securityListRelatedToPeriod);
+  const securities = await prisma.security.findMany();
+  const result = securityListRelatedToPeriod.map((s) => {
+    const beginingDetail = beginingPortfolio.data.find(
+      (b) =>
+        b.securityId == Number(s[0]) &&
+        b.securityClassificationAsPerNFRS == String(s[1])
+    );
+    const purchaseDetail = purchaseTransactionSummaryBySecurity.find(
+      (p) =>
+        p.securityId == Number(s[0]) &&
+        p.securityClassificationAsPerNFRS == String(s[1])
+    );
+    const soldDetail = soldTransactionSummaryBySecurity.find(
+      (sd) =>
+        sd.securityId == Number(s[0]) &&
+        sd.securityClassificationAsPerNFRS == String(s[1])
+    );
+    const closingDetail = endingPortfolio.data.find(
+      (e) =>
+        e.securityId == Number(s[0]) &&
+        e.securityClassificationAsPerNFRS == String(s[1])
+    );
+    //console.log(s[0]);
+    return {
+      securityId: Number(s[0]),
+      name: securities.find((sec) => sec.id == Number(s[0]))?.name || "",
+      shortName:
+        securities.find((sec) => sec.id == Number(s[0]))?.shortName || "",
+      securityClassificationAsPerNFRS: String(s[1]),
+      openingQuantity: beginingDetail ? beginingDetail.remainingQuantity : 0,
+      openingAmount: beginingDetail ? beginingDetail.closingMarketValue : 0,
+      openingMarketRate: beginingDetail?.closingMarketRate || 0,
+      purchaseQuantity: purchaseDetail ? purchaseDetail._sum.quantity || 0 : 0,
+      purchaseAmount: purchaseDetail ? purchaseDetail._sum.amount || 0 : 0,
+      soldQuantity: soldDetail ? -(soldDetail._sum.quantity || 0) : 0,
+      soldAmount: soldDetail ? -(soldDetail._sum.amount || 0) : 0,
+      closingQuantity: closingDetail ? closingDetail.remainingQuantity : 0,
+      closingMarketRate: closingDetail?.closingMarketRate || 0,
+      closingAmount: closingDetail ? closingDetail.closingMarketValue : 0,
+      gain: 0,
+    } as NfrsGainDetail;
+  });
+  //console.log(result);
+  result.forEach(
+    (r) =>
+      (r.gain =
+        r.soldAmount + r.closingAmount - (r.openingAmount + r.purchaseAmount))
+  );
+  //console.log(result);
+  return result;
+}
 export async function calculateNfrsGainForSecurityAsOnDate(
   fromDate: Date,
   toDate: Date
