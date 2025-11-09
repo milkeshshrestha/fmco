@@ -8,27 +8,48 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoaderCircleIcon } from "lucide-react";
 import {
-  getTransactionSummaryBySecurityWithClassification,
-  TransactionSummaryBySecurityWithClassification,
+  getTransactionSummaryBySecurityAndDateWithClassification,
+  getTransactionHistoryBySecurityDateClassificationBetween,
+  TransactionHistoryBySecurityDateClassification,
+  TransactionHistoryBySecurityDateClassificationWithBalance,
 } from "@/data/trade";
-import { DataTable } from "@/components/table/data-table";
+import {
+  DataTable,
+  getNumberFormattedWithDiv,
+} from "@/components/table/data-table";
 
 export default function TradeSecuritySummaryBySecurityPage() {
-  const columns: ColumnDef<TransactionSummaryBySecurityWithClassification>[] = [
+  const columns: ColumnDef<TransactionHistoryBySecurityDateClassification>[] = [
+    { accessorKey: "transactionDate", header: "Date" },
     { accessorKey: "securityName", header: "Name" },
     { accessorKey: "securityShortName", header: "Short Name" },
     {
       accessorKey: "securityClassificationAsPerNFRS",
       header: "NFRS Classification",
     },
-    { accessorKey: "additionQuantity", header: "Purchase Quantity" },
+    {
+      accessorKey: "additionQuantity",
+      header: "Purchase Quantity",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
     {
       accessorKey: "salesQuantity",
-      accessorFn: (data) => -data.salesQuantity,
+      //  accessorFn: (data) => -data.salesQuantity,
       header: "Sold Quantity",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
     },
-    { accessorKey: "additionAmount", header: "Cost of Purchase" },
-    { accessorKey: "salesAmount", header: "Sales Revenue" },
+    //{ accessorKey: "balanceQuantity", header: "Balance Quantity" },
+
+    {
+      accessorKey: "additionAmount",
+      header: "Cost of Purchase",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "salesAmount",
+      header: "Sales Revenue",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
   ];
   const exportHeaderName = [
     "Name",
@@ -36,6 +57,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
     "NFRS Classification",
     "Purchase Quantity",
     "Sold Quantity",
+    //"Balance Quantity",
     "Purchase Cost",
     "Sales revenue",
   ];
@@ -43,11 +65,11 @@ export default function TradeSecuritySummaryBySecurityPage() {
   const todayBSMonth = Number(todayBSDate.split("-")[1]);
   const fyStartDate = BSToAD(
     todayBSMonth > 3
-      ? todayBSDate.split("-")[0]
+      ? todayBSDate.split("-")[0] + "-04-01"
       : Number(todayBSDate.split("-")[0]) - 1 + "-04-01"
   );
   const [data, setData] = useState<
-    TransactionSummaryBySecurityWithClassification[]
+    TransactionHistoryBySecurityDateClassification[]
   >([]);
   const [fromDate, setFromDate] = useState<string>(fyStartDate);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -59,10 +81,26 @@ export default function TradeSecuritySummaryBySecurityPage() {
     setLoading(true);
     setShowTable(false);
 
-    const result = await getTransactionSummaryBySecurityWithClassification(
+    let result = await getTransactionHistoryBySecurityDateClassificationBetween(
       fromDate,
       toDate
     );
+    // let balanceQuantity = 0;
+    // const resultWithBalance: TransactionHistoryBySecurityDateClassificationWithBalance[] =
+    //   [];
+
+    // for (let i = 0; i < result.length; i++) {
+    //   if (
+    //     result[i].securityId === result[i - 1]?.securityId &&
+    //     result[i].securityClassificationAsPerNFRS ===
+    //       result[i - 1]?.securityClassificationAsPerNFRS
+    //   ) {
+    //     balanceQuantity += result[i].additionQuantity - result[i].salesQuantity;
+    //   } else {
+    //     balanceQuantity = result[i].additionQuantity - result[i].salesQuantity;
+    //   }
+    //   resultWithBalance.push({ ...result[i], balanceQuantity });
+    // }
     setData(result);
     setLoading(false);
     setShowTable(true);

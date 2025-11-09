@@ -32,6 +32,11 @@ export default function TradeSecuritySummaryBySecurityPage() {
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
     },
     {
+      accessorKey: "openingMarketRate",
+      header: "Opening Rate",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
       accessorKey: "openingAmount",
       header: "Opening Market Value",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
@@ -80,6 +85,11 @@ export default function TradeSecuritySummaryBySecurityPage() {
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
     },
     {
+      accessorKey: "closingMarketRate",
+      header: "Closing Rate",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
       accessorKey: "closingAmount",
       header: "Closing Market Value",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
@@ -107,12 +117,14 @@ export default function TradeSecuritySummaryBySecurityPage() {
     "Short Name",
     "Classification",
     "Opening Quantity",
+    "Opening Market Rate",
     "Opening Market Value",
     "Purchase Quantity",
     "Purchase Cost",
     "Sold Quantity",
     "Sales Value",
     "Closing Quantity",
+    "Closing Market Rate",
     "Closing Market Value",
     "Gain (Loss)",
   ];
@@ -134,7 +146,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
     setLoading(true);
     setShowTable(false);
     const data = await calculateNfrsGainForSecurityAsOnDate(
-      new Date(fromDate),
+      new Date(new Date(fromDate).getTime() - 24 * 60 * 60 * 1000),
       new Date(toDate)
     );
     data.sort((a, b) =>

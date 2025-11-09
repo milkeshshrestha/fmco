@@ -35,12 +35,14 @@ export type NfrsGainDetail = {
   shortName: string;
   securityClassificationAsPerNFRS: string;
   openingQuantity: number;
+  openingMarketRate: number;
   openingAmount: number;
   purchaseQuantity: number;
   purchaseAmount: number;
   soldQuantity: number;
   soldAmount: number;
   closingQuantity: number;
+  closingMarketRate: number;
   closingAmount: number;
   gain: number;
 };
@@ -117,11 +119,13 @@ export async function calculateNfrsGainForSecurityAsOnDate(
       securityClassificationAsPerNFRS: String(s[1]),
       openingQuantity: beginingDetail ? beginingDetail.remainingQuantity : 0,
       openingAmount: beginingDetail ? beginingDetail.closingMarketValue : 0,
+      openingMarketRate: beginingDetail?.closingMarketRate || 0,
       purchaseQuantity: purchaseDetail ? purchaseDetail._sum.quantity || 0 : 0,
       purchaseAmount: purchaseDetail ? purchaseDetail._sum.amount || 0 : 0,
       soldQuantity: soldDetail ? -(soldDetail._sum.quantity || 0) : 0,
       soldAmount: soldDetail ? -(soldDetail._sum.amount || 0) : 0,
       closingQuantity: closingDetail ? closingDetail.remainingQuantity : 0,
+      closingMarketRate: closingDetail?.closingMarketRate || 0,
       closingAmount: closingDetail ? closingDetail.closingMarketValue : 0,
       gain: 0,
     } as NfrsGainDetail;

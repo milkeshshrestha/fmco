@@ -29,21 +29,26 @@ export type TransactionResultBySecurityAndDateWithClassification = {
   remainingCost: number;
   remainingQuantity: number;
   wacc: number;
-  gain: number | null;
+  gain: number;
 };
 export type TransactionResultBySecurityAndDateWithoutClassification = Omit<
   TransactionResultBySecurityAndDateWithClassification,
-  "cumCost" | "cumQuantity" | "securityClassificationAsPerNFRS"
+  "securityClassificationAsPerNFRS"
 >;
-export type TransactionResultBySecurityWithClassification = Omit<
+export type TransactionResultBySecurityWithoutClassification = Omit<
   TransactionResultBySecurityAndDateWithoutClassification,
   "transactionDate" | "cumCost" | "cumQuantity"
 >;
-export type TransactionResultBySecurityWithoutClassification = Omit<
-  TransactionResultBySecurityWithClassification,
+export type TransactionResultBySecurityWithoutClassificationTDate = Omit<
+  TransactionResultBySecurityWithoutClassification,
   "transactionDate"
 >;
-
+export type TransactionResultBySecurityWithoutClassificationTDateWithOpening =
+  TransactionResultBySecurityWithoutClassification & {
+    openingQuantity: number;
+    openingCost: number;
+    costOfSales: number;
+  };
 export type SecutiyBalanceWithoutClassification = Omit<
   SecurityBalanceWithClassification,
   "securityClassificationAsPerNFRS"
@@ -151,7 +156,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
 
 export const getTransactionResultBySecurityAndDateWithoutClassification = (
   transactionDetail: TransactionSummaryBySecurityAndDateWithoutClassification[]
-) => {
+): TransactionResultBySecurityAndDateWithoutClassification[] => {
   let prevRecord: {
     securityId: number;
     securityShortName: string;
@@ -186,7 +191,7 @@ export const getTransactionResultBySecurityAndDateWithoutClassification = (
         gain:
           security.salesQuantity > 0
             ? security.salesAmount - wacc * security.salesQuantity
-            : null,
+            : 0,
       };
     } else {
       //purchase affects wacc not sales
@@ -210,7 +215,7 @@ export const getTransactionResultBySecurityAndDateWithoutClassification = (
         gain:
           security.salesQuantity > 0
             ? security.salesAmount - wacc * security.salesQuantity
-            : null,
+            : 0,
       };
       prevRecord = {
         securityId: security.securityId,
@@ -244,7 +249,7 @@ export const getTransactionResultGroupedBySecurityWithClassification = (
         acc[key].wacc = item.wacc;
       }
       return acc;
-    }, {} as Record<string, TransactionResultBySecurityWithClassification>)
+    }, {} as Record<string, TransactionResultBySecurityWithoutClassification>)
   );
   return grouped;
 };
@@ -268,7 +273,7 @@ export const getTransactionResultGroupedBySecurityWithoutClassification = (
         acc[key].wacc = item.wacc;
       }
       return acc;
-    }, {} as Record<string, TransactionResultBySecurityWithoutClassification>)
+    }, {} as Record<string, TransactionResultBySecurityWithoutClassificationTDate>)
   );
   return grouped;
 };
@@ -301,7 +306,7 @@ export const getSecurityBalanceWithClassification = (
 };
 
 export const getSecurityBalanceWithoutClassification = (
-  transactionDetail: TransactionResultBySecurityWithoutClassification[]
+  transactionDetail: TransactionResultBySecurityWithoutClassificationTDate[]
 ) => {
   const grouped = Object.values(
     transactionDetail.reduce((acc, item) => {

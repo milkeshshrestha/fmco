@@ -70,8 +70,9 @@ group by st."transactionDate" order by st."transactionDate"
   );
   return result;
 }
-export type TransactionSummaryBySecurityWithClassification = {
+export type TransactionHistoryBySecurityDateClassification = {
   securityId: number;
+  transactionDate: string;
   securityName: string;
   securityShortName: string;
   securityClassificationAsPerNFRS: string;
@@ -80,23 +81,25 @@ export type TransactionSummaryBySecurityWithClassification = {
   additionAmount: number;
   salesAmount: number;
 };
-export async function getTransactionSummaryBySecurityWithClassification(
+export type TransactionHistoryBySecurityDateClassificationWithBalance =
+  TransactionHistoryBySecurityDateClassification & { balanceQuantity: number };
+export async function getTransactionHistoryBySecurityDateClassificationBetween(
   fromDate: string,
   toDate: string
 ) {
   const result = await prisma.$queryRawUnsafe<
-    TransactionSummaryBySecurityWithClassification[]
+    TransactionHistoryBySecurityDateClassification[]
   >(
     `
-  SELECT s."id" as "securityId", s."name" as "securityName", s."shortName" as "securityShortName" , sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS",
-  sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" END) AS "additionQuantity",
-  sum(CASE WHEN sd.quantity <= 0 THEN sd."quantity" END) AS "salesQuantity",
-  sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" END) AS "additionAmount",
-  sum(CASE WHEN sd.quantity <= 0 THEN sd."amount" END) AS "salesAmount"
+  SELECT st."transactionDate" as "transactionDate", s."id" as "securityId", s."name" as "securityName", s."shortName" as "securityShortName" , sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS",
+  sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" Else 0 END) AS "additionQuantity",
+  sum(CASE WHEN sd.quantity <= 0 THEN -sd."quantity" Else 0 END) AS "salesQuantity",
+  sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" Else 0 END) AS "additionAmount",
+  sum(CASE WHEN sd.quantity <= 0 THEN sd."amount" Else 0 END) AS "salesAmount"
 FROM public."SecurityTransaction" as st 
 join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" 
 join "Security" as s on s.id= sd."securityId" where st."transactionDate">=$1 and st."transactionDate"<=$2
-group by s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS" order by s."name", sd."securityClassificationAsPerNFRS"
+group by st."transactionDate", s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS" order by s."name", sd."securityClassificationAsPerNFRS"
   `,
     fromDate,
     toDate
@@ -112,10 +115,10 @@ export async function getTransactionSummaryBySecurityAndDateWithClassification(
   >(
     `
   SELECT s."id" as "securityId", s."name" as "securityName", s."shortName" as "securityShortName",sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS", st."transactionDate",
-  COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" END),0) AS "additionQuantity",
-  COALESCE(sum(CASE WHEN sd.quantity <= 0 THEN -sd."quantity" END),0) AS "salesQuantity",
-  COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" END),0) AS "additionAmount",
-  COALESCE(sum(CASE WHEN sd.quantity <= 0 THEN sd."amount" END),0) AS "salesAmount"
+  COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" Else 0 END),0) AS "additionQuantity",
+  COALESCE(sum(CASE WHEN sd.quantity <= 0 THEN -sd."quantity" Else 0 END),0) AS "salesQuantity",
+  COALESCE(sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" Else 0 END),0) AS "additionAmount",
+  COALESCE(sum(CASE WHEN sd.quantity <= 0 THEN sd."amount" Else 0 END),0) AS "salesAmount"
 FROM public."SecurityTransaction" as st 
 join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" 
 join "Security" as s on s.id= sd."securityId" where  st."transactionDate"<=$1

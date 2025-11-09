@@ -167,14 +167,14 @@ const items = [
         url: "/trade/transaction/daily",
         icon: PlusIcon,
       },
+      // {
+      //   title: "Summary By Date",
+      //   url: "/trade/transaction/bydate",
+      //   icon: BookIcon,
+      // },
       {
-        title: "Summary By Date",
-        url: "/trade/transaction/bydate",
-        icon: BookIcon,
-      },
-      {
-        title: "Summary By Security",
-        url: "/trade/transaction/bysecurity",
+        title: "Transaction History",
+        url: "/trade/transaction/history",
         icon: BookCheckIcon,
       },
     ],
@@ -183,11 +183,11 @@ const items = [
     groupName: "Trade Reports",
     icon: ChartCandlestickIcon,
     submenuItems: [
-      {
-        title: "Gain By Date",
-        url: "/trade/transaction/gain/bydate",
-        icon: FileTextIcon,
-      },
+      // {
+      //   title: "Gain By Date",
+      //   url: "/trade/transaction/gain/bydate",
+      //   icon: FileTextIcon,
+      // },
       {
         title: "Gain By Security",
         url: "/trade/transaction/gain/bysecurity",

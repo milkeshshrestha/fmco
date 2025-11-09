@@ -128,7 +128,7 @@ export default function BalanceSecurityPage() {
           data={data}
           exportHeaderNames={exportHeaderName}
           exportFileName="Gain loss detail"
-          title="Gain Loss calculation"
+          title="Security Balance as per NFRS Classification"
         />
       </div>
     </div>

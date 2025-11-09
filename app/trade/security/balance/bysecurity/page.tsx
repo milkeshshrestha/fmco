@@ -7,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoaderCircleIcon } from "lucide-react";
 import { getTransactionSummaryBySecurityAndDateWithoutClassification } from "@/data/trade";
-import { DataTable } from "@/components/table/data-table";
+import {
+  DataTable,
+  getNumberFormattedWithDiv,
+} from "@/components/table/data-table";
 import {
   getSecurityBalanceWithoutClassification,
   getTransactionResultBySecurityAndDateWithoutClassification,
@@ -18,9 +21,21 @@ export default function BalanceSecurityPage() {
   const columns: ColumnDef<SecurityBalanceWithoutClassification>[] = [
     { accessorKey: "securityName", header: "Name" },
     { accessorKey: "securityShortName", header: "Short Name" },
-    { accessorKey: "remainingQuantity", header: "Remaining Qty" },
-    { accessorKey: "remainingCost", header: "Cost of Remaining Qty" },
-    { accessorKey: "wacc", header: "Closing WACC" },
+    {
+      accessorKey: "remainingQuantity",
+      header: "Remaining Qty",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "remainingCost",
+      header: "Cost of Remaining Qty",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
+    {
+      accessorKey: "wacc",
+      header: "Closing WACC",
+      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+    },
   ];
   const exportHeaderName = [
     "Name",
@@ -83,7 +98,7 @@ export default function BalanceSecurityPage() {
           data={data}
           exportHeaderNames={exportHeaderName}
           exportFileName="Gain loss detail"
-          title="Gain Loss calculation"
+          title="Security Balance by Cost"
         />
       </div>
     </div>
