@@ -5,6 +5,7 @@ import {
   createHeaders,
   nepseAxios,
   nepseClient,
+  SecurityDetail,
 } from "nepse-api-helper";
 
 export async function getClosingPriceForSecurities(
@@ -53,15 +54,32 @@ async function getMarketPrice(
   //   const marketData = await getClosingPrice(date);
   //   return marketData;
   // }
-  const marketData = await getMarketDataAsOn(date);
+  const marketData = await getMarketDataFromAverageHistoryAsOn(date);
 
   const unavailableSecurities = [
-    ...new Set(securitiesData.map((item) => item.securityShortName)),
+    ...new Set(
+      securitiesData
+        .filter(
+          (item) =>
+            !marketData.data.some(
+              (mktItem) => mktItem.symbol === item.securityShortName
+            )
+        )
+        .map((item) => item.securityShortName)
+    ),
   ];
-  const fetchedSecurities = await getMarketDateForGivenSecuritiesAsOn(
-    date,
-    unavailableSecurities
-  );
+  //console.log("unavailableSecurities", unavailableSecurities);
+
+  const fetchedSecurities =
+    unavailableSecurities.length === 0
+      ? { data: [] }
+      : await getMarketDataForGivenSecuritiesOneByOneUsingPriceHistoryAsOn(
+          date,
+          unavailableSecurities
+        );
+  // console.log("fetchedSecurities", fetchedSecurities);
+  const combinedResults = marketData.data.concat(fetchedSecurities.data);
+  //console.log("combinedResults", combinedResults);
   return {
     success: true,
     message: "",
@@ -74,32 +92,32 @@ type CsvRow = {
   closePrice: number;
   [key: string]: string | number | undefined;
 };
-export async function getClosingPrice(
-  date: Date
-): Promise<{ success: boolean; message: string; data: CsvRow[] }> {
-  const url = `https://omitnomis.github.io/ShareSansarScraper/Data/${date
-    .toISOString()
-    .split("T")[0]
-    .replaceAll("-", "_")}.csv`;
-  //console.log(url);
-  const response = await fetch(url, {
-    method: "get",
-  });
-  if (!response.ok) {
-    // Here response.status will be 404, 500, etc.
-    console.error(`Error: ${response.status} ${response.statusText}`);
-    // you can throw an error if you want
-    return { success: false, message: "Error fetching market data", data: [] };
-  }
-  const data = await response.text();
-  //console.log(data);
-  const jsonD = csvToJson(data);
-  //const f = jsonD.find((d) => d["Symbol"] === "NABIL");
-  //console.log(f?.["Close"]);
-  return { success: true, message: "", data: jsonD };
-  //
-  // console.log(resp);
-}
+// export async function getClosingPrice(
+//   date: Date
+// ): Promise<{ success: boolean; message: string; data: CsvRow[] }> {
+//   const url = `https://omitnomis.github.io/ShareSansarScraper/Data/${date
+//     .toISOString()
+//     .split("T")[0]
+//     .replaceAll("-", "_")}.csv`;
+//   //console.log(url);
+//   const response = await fetch(url, {
+//     method: "get",
+//   });
+//   if (!response.ok) {
+//     // Here response.status will be 404, 500, etc.
+//     console.error(`Error: ${response.status} ${response.statusText}`);
+//     // you can throw an error if you want
+//     return { success: false, message: "Error fetching market data", data: [] };
+//   }
+//   const data = await response.text();
+//   //console.log(data);
+//   const jsonD = csvToJson(data);
+//   //const f = jsonD.find((d) => d["Symbol"] === "NABIL");
+//   //console.log(f?.["Close"]);
+//   return { success: true, message: "", data: jsonD };
+//   //
+//   // console.log(resp);
+// }
 type MarketDataResponse = {
   success: boolean;
   message: string;
@@ -110,58 +128,77 @@ type MarketDataResponse = {
   }[];
 };
 
-async function getMarketDateForGivenSecuritiesAsOn(
+async function getLastTransactionDateOfNepse(date: Date): Promise<Date> {
+  await nepseClient.initialize({ useWasm: true });
+  const token = await nepseClient.getToken();
+  //first try with a sample security to find the nearest transaction date
+  const detail = await nepseClient.getSecurityDetail("ADBL");
+  //console.log("detail ", detail);
+  //get first transaction date
+  let transactionDate = new Date(date);
+  let res;
+  do {
+    res = await nepseAxios.get(
+      `${BASE_URL}/api/nots/market/security/price/${detail.id}?&businessDate=${
+        transactionDate.toISOString().split("T")[0]
+      }`,
+      { headers: createHeaders(token) }
+    );
+    transactionDate.setDate(transactionDate.getDate() - 1);
+  } while (res.data.content.length == 0);
+  transactionDate.setDate(transactionDate.getDate() + 1);
+  //console.log("using transaction date:", transactionDate);
+  return transactionDate;
+}
+type ResponseCustom = {
+  content: { security: { symbol: string }; closePrice: number }[];
+};
+async function getMarketDataForGivenSecuritiesOneByOneUsingPriceHistoryAsOn(
   date: Date,
   securitiesSymbols: string[]
 ): Promise<MarketDataResponse> {
-  await nepseClient.initialize({ useWasm: false });
+  await nepseClient.initialize({ useWasm: true });
   const token = await nepseClient.getToken();
-
+  console.log("trying one by one fetch for securities:", securitiesSymbols);
   try {
-    const detail = await nepseClient.getSecurityDetail(securitiesSymbols[0]);
-    //console.log("detail ", detail);
-    //get first transaction date
-    let transactionDate = new Date(date);
-    let res;
-    do {
-      res = await nepseAxios.get(
-        `${BASE_URL}/api/nots/market/security/price/${
-          detail.id
-        }?&businessDate=${transactionDate.toISOString().split("T")[0]}`,
-        { headers: createHeaders(token) }
-      );
-      // console.log("fetched market data for :" + securitiesSymbols[0], res.data);
-      // console.log(
-      //   "content length:" + securitiesSymbols[0],
-      //   res.data.content.length
-      // );
-      transactionDate.setDate(transactionDate.getDate() - 1);
-    } while (res.data.content.length == 0);
-    transactionDate.setDate(transactionDate.getDate() + 1);
-    console.log("using transaction date:", transactionDate);
-    const response = [] as unknown as {
-      content: { security: { symbol: string }; closePrice: number }[];
-    }[];
-    for (const symbol of securitiesSymbols) {
-      const securityDetail = await nepseClient.getSecurityDetail(symbol);
-      //console.log("securityDetail", securityDetail);
-      const securityPriceHistoryAsOn = await nepseAxios.get(
-        `${BASE_URL}/api/nots/market/security/price/${
-          securityDetail.id
-        }?&businessDate=${transactionDate.toISOString().split("T")[0]}`,
-        { headers: createHeaders(token) }
-      );
-      response.push(securityPriceHistoryAsOn.data);
-      // console.log(
-      //   "fetched market data for:" + symbol,
-      //   securityPriceHistoryAsOn.data
-      // );
-    }
+    const transactionDate = await getLastTransactionDateOfNepse(date);
+    const responseAll = await Promise.all(
+      securitiesSymbols.map(async (symbol) => {
+        //console.log("s fetching market data for:" + symbol);
+        try {
+          const securityDetail = await nepseClient.getSecurityDetail(symbol);
+          const securityPriceHistoryAsOn: ResponseCustom = (
+            await nepseAxios.get(
+              `${BASE_URL}/api/nots/market/security/price/${
+                securityDetail.id
+              }?&businessDate=${transactionDate.toISOString().split("T")[0]}`,
+              { headers: createHeaders(token) }
+            )
+          ).data as ResponseCustom;
 
+          //console.log("fetched data 1 by 1 for :" + symbol); //, securityPriceHistoryAsOn);
+          return securityPriceHistoryAsOn;
+        } catch (err) {
+          //console.error("Error fetching data for symbol:" + symbol);
+          return {
+            content: [
+              {
+                security: { symbol: symbol },
+                closePrice: NaN,
+              },
+            ],
+          } as ResponseCustom;
+        }
+        // console.log(
+        //   "fetched market data for:" + symbol,
+        //   securityPriceHistoryAsOn.data
+        // );
+      })
+    );
     return {
-      success: false,
-      message: "Error fetching market data",
-      data: response.map((item) => {
+      success: true,
+      message: "Fetch success",
+      data: responseAll.map((item) => {
         return {
           symbol: item.content[0].security.symbol,
           closePrice: item.content[0].closePrice,
@@ -169,7 +206,7 @@ async function getMarketDateForGivenSecuritiesAsOn(
       }),
     };
   } catch (err: any) {
-    console.error("Error fetching market data:", err);
+    //console.error("Error fetching market data:", err);
     return {
       success: false,
       message: "Error fetching market data",
@@ -178,7 +215,7 @@ async function getMarketDateForGivenSecuritiesAsOn(
   }
 }
 
-async function getMarketDataAsOn(date: Date): Promise<{
+async function getMarketDataFromAverageHistoryAsOn(date: Date): Promise<{
   success: boolean;
   message: string;
   data: {
@@ -187,13 +224,13 @@ async function getMarketDataAsOn(date: Date): Promise<{
     [key: string]: string | number;
   }[];
 }> {
-  console.log("getting current market rate");
+  console.log("getting current market rate as on date:", date);
   //at first before anything, call initialize() on nepseClient. This is required to get the deobsfucation logic for token.
-  await nepseClient.initialize({ useWasm: false });
-  console.log("nepseClient initialized");
+  await nepseClient.initialize({ useWasm: true });
+  //console.log("nepseClient initialized");
   //if you want to make your own custom API call for a function that isn't defined in this library, you can just get the token first
   const token = await nepseClient.getToken();
-  //console.log("token", token);
+  console.log("token", token);
   //const marketStatus = await nepseClient.getMarketStatus();
   //const bodyId = calculateValidBodyId(marketStatus?.id ?? 0);
   //console.log("calculated bodyId", bodyId);
@@ -209,32 +246,28 @@ async function getMarketDataAsOn(date: Date): Promise<{
   // );
 
   // console.log(responseCustom.data);
-
-  const response = await fetch(
-    `${BASE_URL}/api/nots/nepse-data/trading-average?nDays=180&businessDate=${
-      date.toISOString().split("T")[0]
-    }`,
-    //"https://nepalstock.com/api/nots/nepse-data/today-price",
-    //"/api/nots/securityDailyTradeStat/58",
-    {
-      headers: {
-        authorization: `Salter ${token}`,
-        "content-type": "application/json",
-      },
-      //body: JSON.stringify({ id: bodyId }),
-      //method: "POST",
-      method: "Get",
-    }
-  );
-  if (!response.ok) {
+  const transactionDate = await getLastTransactionDateOfNepse(date);
+  console.log("using transaction date for average fetch:", transactionDate);
+  const dateString = transactionDate.toISOString().split("T")[0];
+  const fetchUrl = `${BASE_URL}/api/nots/nepse-data/trading-average?nDays=180&businessDate=${dateString}`;
+  console.log("fetching market data from url:", fetchUrl);
+  try {
+    const response = await nepseAxios.get(
+      fetchUrl,
+      //"https://nepalstock.com/api/nots/nepse-data/today-price",
+      //"/api/nots/securityDailyTradeStat/58",
+      { headers: createHeaders(token) }
+    );
+    const data = await response.data;
+    console.log("Average data as on " + dateString, data.slice(0, 1));
+    return { success: true, message: "", data: data };
+  } catch (err: any) {
     // Here response.status will be 404, 500, etc.
-    console.error(`Error: ${response.status} ${response.statusText}`);
+    //console.error(`Error: ${response.status} ${response.statusText}`);
     // you can throw an error if you want
     return { success: false, message: "Error fetching market data", data: [] };
   }
   //console.log(response);
-  const data = await response.json();
-  return { success: true, message: "", data: data };
 }
 
 function csvToJson(csv: string): CsvRow[] {

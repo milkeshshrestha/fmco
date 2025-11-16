@@ -147,20 +147,19 @@ export async function calculateNfrsGainForSecurityAsOnDate(
   fromDate: Date,
   toDate: Date
 ): Promise<NfrsGainDetail[]> {
-  const beginingPortfolio =
-    await getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
-      fromDate
-    );
-  //console.log("beginingPortfolio", beginingPortfolio);
-  const endingPortfolio =
-    await getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(toDate);
+  const openingBalanceDate = new Date(fromDate.getTime() - 24 * 60 * 60 * 1000);
+
+  const [beginingPortfolio, endingPortfolio] = await Promise.all([
+    getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
+      openingBalanceDate
+    ),
+    getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(toDate),
+  ]);
   //console.log("endingPortfolio", endingPortfolio);
+
   const purchaseTransactionSummaryBySecurity =
     await getSecuritiesPurchasedBetweenDates(fromDate, toDate);
-  // console.log(
-  //   "purchaseTransactionSummaryBySecurity",
-  //   purchaseTransactionSummaryBySecurity
-  // );
+
   const soldTransactionSummaryBySecurity = await getSecuritiesSoldBetweenDates(
     fromDate,
     toDate
@@ -228,11 +227,14 @@ export async function calculateNfrsGainForSecurityAsOnDate(
     } as NfrsGainDetail;
   });
   //console.log(result);
-  result.forEach(
-    (r) =>
-      (r.gain =
-        r.soldAmount + r.closingAmount - (r.openingAmount + r.purchaseAmount))
-  );
+  result.forEach((r) => {
+    if (Number.isNaN(r.closingAmount)) {
+      r.gain = 0;
+    } else {
+      r.gain =
+        r.soldAmount + r.closingAmount - (r.openingAmount + r.purchaseAmount);
+    }
+  });
   //console.log(result);
   return result;
 }
