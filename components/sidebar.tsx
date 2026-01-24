@@ -1,8 +1,10 @@
 import {
+  ActivityIcon,
   AlignLeftIcon,
   AnchorIcon,
   ArrowBigUp,
   ArrowBigUpIcon,
+  BaggageClaimIcon,
   BookCheckIcon,
   BookIcon,
   BookTextIcon,
@@ -177,11 +179,16 @@ const items = [
         url: "/trade/transaction/history",
         icon: BookCheckIcon,
       },
+      {
+        title: "Transn History (+Wacc)",
+        url: "/trade/transaction/historyWithWacc",
+        icon: BaggageClaimIcon,
+      },
     ],
   },
   {
     groupName: "Trade Reports",
-    icon: ChartCandlestickIcon,
+    icon: ActivityIcon,
     submenuItems: [
       // {
       //   title: "Gain By Date",
@@ -296,7 +303,7 @@ export function AppSidebar() {
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
+                ),
               )}
             </SidebarMenu>
           </SidebarGroupContent>

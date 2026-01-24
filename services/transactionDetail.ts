@@ -73,8 +73,8 @@ export type SecurityBalanceWithoutClassification = {
   wacc: number;
 };
 export const getTransactionResultBySecurityAndDateWithClassification = (
-  transactionDetail: TransactionSummaryBySecurityAndDateWithClassification[]
-) => {
+  transactionDetail: TransactionSummaryBySecurityAndDateWithClassification[],
+): TransactionResultBySecurityAndDateWithClassification[] => {
   let prevRecord: {
     securityId: number;
     securityShortName: string;
@@ -155,7 +155,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
 };
 
 export const getTransactionResultBySecurityAndDateWithoutClassification = (
-  transactionDetail: TransactionSummaryBySecurityAndDateWithoutClassification[]
+  transactionDetail: TransactionSummaryBySecurityAndDateWithoutClassification[],
 ): TransactionResultBySecurityAndDateWithoutClassification[] => {
   let prevRecord: {
     securityId: number;
@@ -230,103 +230,119 @@ export const getTransactionResultBySecurityAndDateWithoutClassification = (
 };
 
 export const getTransactionResultGroupedBySecurityWithClassification = (
-  transactionDetail: TransactionResultBySecurityAndDateWithClassification[]
+  transactionDetail: TransactionResultBySecurityAndDateWithClassification[],
 ) => {
   const grouped = Object.values(
-    transactionDetail.reduce((acc, item) => {
-      const key = `${item.securityShortName}-${item.securityClassificationAsPerNFRS}`;
-      if (!acc[key]) {
-        const { cumCost, cumQuantity, gain, transactionDate, ...rem } = item;
-        acc[key] = { ...rem, gain: item.gain ?? 0 };
-      } else {
-        acc[key].additionAmount += item.additionAmount;
-        acc[key].additionQuantity += item.additionQuantity;
-        acc[key].salesQuantity += item.salesQuantity;
-        acc[key].salesAmount += item.salesAmount;
-        acc[key].gain! += item.gain ?? 0;
-        acc[key].remainingCost = item.remainingCost;
-        acc[key].remainingQuantity = item.remainingQuantity;
-        acc[key].wacc = item.wacc;
-      }
-      return acc;
-    }, {} as Record<string, TransactionResultBySecurityWithoutClassification>)
+    transactionDetail.reduce(
+      (acc, item) => {
+        const key = `${item.securityShortName}-${item.securityClassificationAsPerNFRS}`;
+        if (!acc[key]) {
+          const { cumCost, cumQuantity, gain, transactionDate, ...rem } = item;
+          acc[key] = { ...rem, gain: item.gain ?? 0 };
+        } else {
+          acc[key].additionAmount += item.additionAmount;
+          acc[key].additionQuantity += item.additionQuantity;
+          acc[key].salesQuantity += item.salesQuantity;
+          acc[key].salesAmount += item.salesAmount;
+          acc[key].gain! += item.gain ?? 0;
+          acc[key].remainingCost = item.remainingCost;
+          acc[key].remainingQuantity = item.remainingQuantity;
+          acc[key].wacc = item.wacc;
+        }
+        return acc;
+      },
+      {} as Record<string, TransactionResultBySecurityWithoutClassification>,
+    ),
   );
   return grouped;
 };
 export const getTransactionResultGroupedBySecurityWithoutClassification = (
-  transactionDetail: TransactionResultBySecurityAndDateWithoutClassification[]
+  transactionDetail: TransactionResultBySecurityAndDateWithoutClassification[],
 ) => {
   const grouped = Object.values(
-    transactionDetail.reduce((acc, item) => {
-      const key = `${item.securityShortName}`;
-      if (!acc[key]) {
-        const { gain, transactionDate, ...rem } = item;
-        acc[key] = { ...rem, gain: item.gain ?? 0 };
-      } else {
-        acc[key].additionAmount += item.additionAmount;
-        acc[key].additionQuantity += item.additionQuantity;
-        acc[key].salesQuantity += item.salesQuantity;
-        acc[key].salesAmount += item.salesAmount;
-        acc[key].gain! += item.gain ?? 0;
-        acc[key].remainingCost = item.remainingCost;
-        acc[key].remainingQuantity = item.remainingQuantity;
-        acc[key].wacc = item.wacc;
-      }
-      return acc;
-    }, {} as Record<string, TransactionResultBySecurityWithoutClassificationTDate>)
+    transactionDetail.reduce(
+      (acc, item) => {
+        const key = `${item.securityShortName}`;
+        if (!acc[key]) {
+          const { gain, transactionDate, ...rem } = item;
+          acc[key] = { ...rem, gain: item.gain ?? 0 };
+        } else {
+          acc[key].additionAmount += item.additionAmount;
+          acc[key].additionQuantity += item.additionQuantity;
+          acc[key].salesQuantity += item.salesQuantity;
+          acc[key].salesAmount += item.salesAmount;
+          acc[key].gain! += item.gain ?? 0;
+          acc[key].remainingCost = item.remainingCost;
+          acc[key].remainingQuantity = item.remainingQuantity;
+          acc[key].wacc = item.wacc;
+        }
+        return acc;
+      },
+      {} as Record<
+        string,
+        TransactionResultBySecurityWithoutClassificationTDate
+      >,
+    ),
   );
   return grouped;
 };
 
 export const getSecurityBalanceWithClassification = (
-  transactionDetail: TransactionResultBySecurityAndDateWithClassification[]
+  transactionDetail: TransactionResultBySecurityAndDateWithClassification[],
 ) => {
   const grouped = Object.values(
-    transactionDetail.reduce((acc, item) => {
-      const key = `${item.securityShortName}-${item.securityClassificationAsPerNFRS}`;
-      if (!acc[key]) {
-        acc[key] = {
-          securityId: item.securityId,
-          securityName: item.securityName,
-          securityShortName: item.securityShortName,
-          securityClassificationAsPerNFRS: item.securityClassificationAsPerNFRS,
-          remainingCost: item.remainingCost,
-          remainingQuantity: item.remainingQuantity,
-          wacc: item.wacc,
-        };
-      } else {
-        acc[key].wacc = item.wacc;
-        acc[key].remainingCost = item.remainingCost;
-        acc[key].remainingQuantity = item.remainingQuantity;
-      }
-      return acc;
-    }, {} as Record<string, SecurityBalanceWithClassification>)
+    transactionDetail.reduce(
+      (acc, item) => {
+        const key = `${item.securityShortName}-${item.securityClassificationAsPerNFRS}`;
+        if (!acc[key]) {
+          acc[key] = {
+            securityId: item.securityId,
+            securityName: item.securityName,
+            securityShortName: item.securityShortName,
+            securityClassificationAsPerNFRS:
+              item.securityClassificationAsPerNFRS,
+            remainingCost: item.remainingCost,
+            remainingQuantity: item.remainingQuantity,
+            wacc: item.wacc,
+          };
+        } else {
+          acc[key].wacc = item.wacc;
+          acc[key].remainingCost = item.remainingCost;
+          acc[key].remainingQuantity = item.remainingQuantity;
+        }
+        return acc;
+      },
+      {} as Record<string, SecurityBalanceWithClassification>,
+    ),
   );
   return grouped;
 };
 
 export const getSecurityBalanceWithoutClassification = (
-  transactionDetail: TransactionResultBySecurityWithoutClassificationTDate[]
+  transactionDetail: TransactionResultBySecurityWithoutClassificationTDate[],
 ) => {
   const grouped = Object.values(
-    transactionDetail.reduce((acc, item) => {
-      const key = `${item.securityShortName}`;
-      if (!acc[key]) {
-        acc[key] = {
-          securityId: item.securityId,
-          securityName: item.securityName,
-          securityShortName: item.securityShortName,
-          remainingCost: item.remainingCost,
-          remainingQuantity: item.remainingQuantity,
-          wacc: item.wacc,
-        };
-      } else {
-        acc[key].wacc = item.wacc;
-        acc[key].remainingCost = item.remainingCost;
-        acc[key].remainingQuantity = item.remainingQuantity;
-      }
-      return acc;
-    }, {} as Record<string, SecutiyBalanceWithoutClassification>)
+    transactionDetail.reduce(
+      (acc, item) => {
+        const key = `${item.securityShortName}`;
+        if (!acc[key]) {
+          acc[key] = {
+            securityId: item.securityId,
+            securityName: item.securityName,
+            securityShortName: item.securityShortName,
+            remainingCost: item.remainingCost,
+            remainingQuantity: item.remainingQuantity,
+            wacc: item.wacc,
+          };
+        } else {
+          acc[key].wacc = item.wacc;
+          acc[key].remainingCost = item.remainingCost;
+          acc[key].remainingQuantity = item.remainingQuantity;
+        }
+        return acc;
+      },
+      {} as Record<string, SecutiyBalanceWithoutClassification>,
+    ),
   );
   return grouped;
 };

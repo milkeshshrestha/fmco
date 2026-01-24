@@ -12,45 +12,69 @@ import {
   getTransactionHistoryBySecurityDateClassificationBetween,
   TransactionHistoryBySecurityDateClassification,
   TransactionHistoryBySecurityDateClassificationWithBalance,
+  getTransactionHistoryBySecurityDateClassificationToDate,
 } from "@/data/trade";
 import {
   DataTable,
   getNumberFormattedWithDiv,
 } from "@/components/table/data-table";
+import {
+  getTransactionResultBySecurityAndDateWithClassification,
+  TransactionResultBySecurityAndDateWithClassification,
+} from "@/services/transactionDetail";
 
 export default function TradeSecuritySummaryBySecurityPage() {
-  const columns: ColumnDef<TransactionHistoryBySecurityDateClassification>[] = [
-    { accessorKey: "transactionDate", header: "Date" },
-    { accessorKey: "securityName", header: "Name" },
-    { accessorKey: "securityShortName", header: "Short Name" },
-    {
-      accessorKey: "securityClassificationAsPerNFRS",
-      header: "NFRS Classification",
-    },
-    {
-      accessorKey: "additionQuantity",
-      header: "Purchase Quantity",
-      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
-    },
-    {
-      accessorKey: "salesQuantity",
-      //  accessorFn: (data) => -data.salesQuantity,
-      header: "Sold Quantity",
-      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
-    },
-    //{ accessorKey: "balanceQuantity", header: "Balance Quantity" },
+  const columns: ColumnDef<TransactionResultBySecurityAndDateWithClassification>[] =
+    [
+      { accessorKey: "transactionDate", header: "Date" },
+      { accessorKey: "securityName", header: "Name" },
+      { accessorKey: "securityShortName", header: "Short Name" },
+      {
+        accessorKey: "securityClassificationAsPerNFRS",
+        header: "NFRS Classification",
+      },
+      {
+        accessorKey: "additionQuantity",
+        header: "Purchase Quantity",
+        cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      },
+      {
+        accessorKey: "salesQuantity",
+        //  accessorFn: (data) => -data.salesQuantity,
+        header: "Sold Quantity",
+        cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      },
+      {
+        accessorKey: "remainingQuantity",
+        //  accessorFn: (data) => -data.salesQuantity,
+        header: "Balance Quantity",
+        cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      },
+      //{ accessorKey: "balanceQuantity", header: "Balance Quantity" },
 
-    {
-      accessorKey: "additionAmount",
-      header: "Cost of Purchase",
-      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
-    },
-    {
-      accessorKey: "salesAmount",
-      header: "Sales Revenue",
-      cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
-    },
-  ];
+      {
+        accessorKey: "additionAmount",
+        header: "Cost of Purchase",
+        cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      },
+      {
+        accessorKey: "wacc",
+        //  accessorFn: (data) => -data.salesQuantity,
+        header: "WACC",
+        cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      },
+      {
+        accessorKey: "salesAmount",
+        header: "Sales Revenue",
+        cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      },
+      {
+        accessorKey: "remainingCost",
+        //  accessorFn: (data) => -data.salesQuantity,
+        header: "Remaining Cost",
+        cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      },
+    ];
   const exportHeaderName = [
     "Name",
     "Short Name",
@@ -69,7 +93,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
       : Number(todayBSDate.split("-")[0]) - 1 + "-04-01",
   );
   const [data, setData] = useState<
-    TransactionHistoryBySecurityDateClassification[]
+    TransactionResultBySecurityAndDateWithClassification[]
   >([]);
   const [fromDate, setFromDate] = useState<string>(fyStartDate);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -81,27 +105,19 @@ export default function TradeSecuritySummaryBySecurityPage() {
     setLoading(true);
     setShowTable(false);
 
-    let result = await getTransactionHistoryBySecurityDateClassificationBetween(
-      fromDate,
-      toDate,
+    const transactionDetail =
+      await getTransactionHistoryBySecurityDateClassificationToDate(toDate);
+    const resultAfterCostCalc =
+      getTransactionResultBySecurityAndDateWithClassification(
+        transactionDetail,
+      );
+    const sortedResultAfterCostCalc = resultAfterCostCalc.sort((a, b) =>
+      a.transactionDate.localeCompare(b.transactionDate),
     );
-    result.sort((a, b) => a.transactionDate.localeCompare(b.transactionDate));
-    // let balanceQuantity = 0;
-    // const resultWithBalance: TransactionHistoryBySecurityDateClassificationWithBalance[] =
-    //   [];
-
-    // for (let i = 0; i < result.length; i++) {
-    //   if (
-    //     result[i].securityId === result[i - 1]?.securityId &&
-    //     result[i].securityClassificationAsPerNFRS ===
-    //       result[i - 1]?.securityClassificationAsPerNFRS
-    //   ) {
-    //     balanceQuantity += result[i].additionQuantity - result[i].salesQuantity;
-    //   } else {
-    //     balanceQuantity = result[i].additionQuantity - result[i].salesQuantity;
-    //   }
-    //   resultWithBalance.push({ ...result[i], balanceQuantity });
-    // }
+    const result = sortedResultAfterCostCalc.filter((item) => {
+      const itemDate = item.transactionDate;
+      return itemDate >= fromDate;
+    });
     setData(result);
     setLoading(false);
     setShowTable(true);

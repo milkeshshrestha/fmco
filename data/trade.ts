@@ -44,7 +44,7 @@ export async function getSecuritiesList() {
 
 export async function getTransactionSummaryByDate(
   fromDate: string,
-  toDate: string
+  toDate: string,
 ) {
   const result = await prisma.$queryRawUnsafe<
     {
@@ -66,7 +66,7 @@ join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" whe
 group by st."transactionDate" order by st."transactionDate"
   `,
     fromDate,
-    toDate
+    toDate,
   );
   return result;
 }
@@ -85,7 +85,7 @@ export type TransactionHistoryBySecurityDateClassificationWithBalance =
   TransactionHistoryBySecurityDateClassification & { balanceQuantity: number };
 export async function getTransactionHistoryBySecurityDateClassificationBetween(
   fromDate: string,
-  toDate: string
+  toDate: string,
 ) {
   const result = await prisma.$queryRawUnsafe<
     TransactionHistoryBySecurityDateClassification[]
@@ -99,16 +99,36 @@ export async function getTransactionHistoryBySecurityDateClassificationBetween(
 FROM public."SecurityTransaction" as st 
 join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" 
 join "Security" as s on s.id= sd."securityId" where st."transactionDate">=$1 and st."transactionDate"<=$2
-group by st."transactionDate", s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS" order by s."name", sd."securityClassificationAsPerNFRS"
+group by st."transactionDate", s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS" order by st."transactionDate" asc, s."name", sd."securityClassificationAsPerNFRS"
   `,
     fromDate,
-    toDate
+    toDate,
   );
   return result;
 }
-
+export async function getTransactionHistoryBySecurityDateClassificationToDate(
+  toDate: string,
+) {
+  const result = await prisma.$queryRawUnsafe<
+    TransactionSummaryBySecurityAndDateWithClassification[]
+  >(
+    `
+  SELECT st."transactionDate" as "transactionDate", s."id" as "securityId", s."name" as "securityName", s."shortName" as "securityShortName" , sd."securityClassificationAsPerNFRS" as "securityClassificationAsPerNFRS",
+  sum(CASE WHEN sd.quantity >= 0 THEN sd."quantity" Else 0 END) AS "additionQuantity",
+  sum(CASE WHEN sd.quantity <= 0 THEN -sd."quantity" Else 0 END) AS "salesQuantity",
+  sum(CASE WHEN sd.quantity >= 0 THEN sd."amount" Else 0 END) AS "additionAmount",
+  sum(CASE WHEN sd.quantity <= 0 THEN sd."amount" Else 0 END) AS "salesAmount"
+FROM public."SecurityTransaction" as st 
+join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id" 
+join "Security" as s on s.id= sd."securityId" where st."transactionDate"<=$1
+group by st."transactionDate", s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS",sd."quantity" order by  s."name", sd."securityClassificationAsPerNFRS",st."transactionDate" asc, sd."quantity" desc
+  `,
+    toDate,
+  );
+  return result;
+}
 export async function getTransactionSummaryBySecurityAndDateWithClassification(
-  toDate: string
+  toDate: string,
 ) {
   const result = await prisma.$queryRawUnsafe<
     TransactionSummaryBySecurityAndDateWithClassification[]
@@ -124,13 +144,13 @@ join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id"
 join "Security" as s on s.id= sd."securityId" where  st."transactionDate"<=$1
 group by s.id, s.name,s."shortName",sd."securityClassificationAsPerNFRS" ,st."transactionDate" order by s."name" asc,sd."securityClassificationAsPerNFRS" asc, st."transactionDate" asc
   `,
-    toDate
+    toDate,
   );
   return result;
 }
 
 export async function getTransactionSummaryBySecurityAndDateWithoutClassification(
-  toDate: string
+  toDate: string,
 ) {
   const result = await prisma.$queryRawUnsafe<
     TransactionSummaryBySecurityAndDateWithoutClassification[]
@@ -146,7 +166,7 @@ join "SecurityTransactionDetail" as sd on sd."securityTransactionId"=st."id"
 join "Security" as s on s.id= sd."securityId" where  st."transactionDate"<=$1
 group by s.id, s.name, s."shortName" ,st."transactionDate" order by s."name" asc, st."transactionDate" asc
   `,
-    toDate
+    toDate,
   );
   return result;
 }
