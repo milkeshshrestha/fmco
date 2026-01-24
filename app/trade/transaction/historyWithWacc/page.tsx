@@ -76,13 +76,15 @@ export default function TradeSecuritySummaryBySecurityPage() {
       },
     ];
   const exportHeaderName = [
+    "Transaction Date",
     "Name",
     "Short Name",
     "NFRS Classification",
     "Purchase Quantity",
     "Sold Quantity",
-    //"Balance Quantity",
+    "Balance Quantity",
     "Purchase Cost",
+    "WACC",
     "Sales revenue",
   ];
   const todayBSDate = ADToBS(new Date());

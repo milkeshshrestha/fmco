@@ -134,7 +134,7 @@ export const getTransactionResultBySecurityAndDateWithClassification = (
         cumCost: prevRecord.remainingCost + security.additionAmount,
         remainingCost: remainingCost,
         remainingQuantity: remainingSecurityAtEnd,
-        wacc: remainingCost / remainingSecurityAtEnd,
+        wacc: wacc, //remainingCost / remainingSecurityAtEnd,
         gain:
           security.salesQuantity > 0
             ? security.salesAmount - wacc * security.salesQuantity
