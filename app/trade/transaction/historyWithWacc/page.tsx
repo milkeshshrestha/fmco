@@ -7,13 +7,7 @@ import { ADToBS, BSToAD } from "bikram-sambat-js";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { LoaderCircleIcon } from "lucide-react";
-import {
-  getTransactionSummaryBySecurityAndDateWithClassification,
-  getTransactionHistoryBySecurityDateClassificationBetween,
-  TransactionHistoryBySecurityDateClassification,
-  TransactionHistoryBySecurityDateClassificationWithBalance,
-  getTransactionHistoryBySecurityDateClassificationToDate,
-} from "@/data/trade";
+import { getTransactionHistoryBySecurityDateClassificationToDate } from "@/data/trade";
 import {
   DataTable,
   getNumberFormattedWithDiv,
@@ -22,11 +16,16 @@ import {
   getTransactionResultBySecurityAndDateWithClassification,
   TransactionResultBySecurityAndDateWithClassification,
 } from "@/services/transactionDetail";
-
+type TransactionResultBySecurityAndDateWithClassificationWithBsDate =
+  TransactionResultBySecurityAndDateWithClassification & {
+    transactionDateBs: string;
+  };
 export default function TradeSecuritySummaryBySecurityPage() {
-  const columns: ColumnDef<TransactionResultBySecurityAndDateWithClassification>[] =
+  const columns: ColumnDef<TransactionResultBySecurityAndDateWithClassificationWithBsDate>[] =
     [
       { accessorKey: "transactionDate", header: "Date" },
+      { accessorKey: "transactionDateBs", header: "Date (BS)" },
+
       { accessorKey: "securityName", header: "Name" },
       { accessorKey: "securityShortName", header: "Short Name" },
       {
@@ -77,6 +76,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
     ];
   const exportHeaderName = [
     "Transaction Date",
+    "Transaction Date (BS)",
     "Name",
     "Short Name",
     "NFRS Classification",
@@ -86,6 +86,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
     "Purchase Cost",
     "WACC",
     "Sales revenue",
+    "Remaining Cost",
   ];
   const todayBSDate = ADToBS(new Date());
   const todayBSMonth = Number(todayBSDate.split("-")[1]);
@@ -95,7 +96,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
       : Number(todayBSDate.split("-")[0]) - 1 + "-04-01",
   );
   const [data, setData] = useState<
-    TransactionResultBySecurityAndDateWithClassification[]
+    TransactionResultBySecurityAndDateWithClassificationWithBsDate[]
   >([]);
   const [fromDate, setFromDate] = useState<string>(fyStartDate);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -120,7 +121,14 @@ export default function TradeSecuritySummaryBySecurityPage() {
       const itemDate = item.transactionDate;
       return itemDate >= fromDate;
     });
-    setData(result);
+    const resultWithBsDate: TransactionResultBySecurityAndDateWithClassificationWithBsDate[] =
+      result.map((item) => {
+        return {
+          ...item,
+          transactionDateBs: ADToBS(new Date(item.transactionDate)),
+        };
+      });
+    setData(resultWithBsDate);
     setLoading(false);
     setShowTable(true);
   };
