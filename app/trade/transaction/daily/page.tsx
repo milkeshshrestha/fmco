@@ -86,7 +86,7 @@ type SecurityTransactionDetailCustom = z.infer<
 >;
 export default function DailyTransactionPage() {
   const [transactionDate, setTransactionDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [securityList, setSecurityList] = useState<Security[]>([]);
   const [transactionData, setTransactionData] = useState<
@@ -120,7 +120,7 @@ export default function DailyTransactionPage() {
     if (!transactionDate) toast("Please select a date");
     if (transactionDate) {
       const tradeDuringTheDay = await getTransactionsOfTheDay(
-        new Date(transactionDate)
+        new Date(transactionDate),
       );
       if (!tradeDuringTheDay) {
         toast("No data found");
@@ -173,7 +173,7 @@ export default function DailyTransactionPage() {
     //{ keepDefaultValues: true } prevents original default from changing
     form.reset(
       transactionData.find((td) => td.index == index),
-      { keepDefaultValues: true }
+      { keepDefaultValues: true },
     );
     setDialogOpen(true);
   };
@@ -185,7 +185,7 @@ export default function DailyTransactionPage() {
     fetchSecuritiesList();
   }, []);
   const handleSubmit = async (
-    data: z.infer<typeof SecurityTransactionDetailValidationSchema>
+    data: z.infer<typeof SecurityTransactionDetailValidationSchema>,
   ) => {
     toast("Transaction Record Added");
     const isPurchaseCurrentlySelected = isAdditionTransaction;
@@ -202,12 +202,12 @@ export default function DailyTransactionPage() {
     setPurchaseTransactionData(
       transactionData
         .filter((td) => td.isAdditionTransaction)
-        .sort((a, b) => a.index - b.index)
+        .sort((a, b) => a.index - b.index),
     );
     setSaleTransactionData(
       transactionData
         .filter((td) => !td.isAdditionTransaction)
-        .sort((a, b) => a.index - b.index)
+        .sort((a, b) => a.index - b.index),
     );
   }, [transactionData]);
   const saveButtonClickHandler = async () => {
@@ -215,10 +215,10 @@ export default function DailyTransactionPage() {
       toast.error("Select transaction date first");
       return;
     }
-    if (transactionData.length == 0) {
-      toast.error("No transaction data to save");
-      return;
-    }
+    // if (transactionData.length == 0) {
+    //   toast.error("No transaction data to save");
+    //   return;
+    // }
     const data = {
       transactionDate: new Date(transactionDate),
       transactionDetail: transactionData,
@@ -289,13 +289,13 @@ export default function DailyTransactionPage() {
                           <TableCell
                             title={
                               securityList.find(
-                                (s) => s.id == transaction.securityId
+                                (s) => s.id == transaction.securityId,
                               )?.name
                             }
                           >
                             {
                               securityList.find(
-                                (s) => s.id == transaction.securityId
+                                (s) => s.id == transaction.securityId,
                               )?.shortName
                             }
                           </TableCell>
@@ -341,7 +341,7 @@ export default function DailyTransactionPage() {
                             {purchaseTransactionData.reduce(
                               (accumulator, currentValue) =>
                                 accumulator + currentValue.quantity,
-                              0
+                              0,
                             )}
                           </TableCell>
                           <TableCell></TableCell>
@@ -349,7 +349,7 @@ export default function DailyTransactionPage() {
                             {purchaseTransactionData.reduce(
                               (accumulator, currentValue) =>
                                 accumulator + currentValue.amount,
-                              0
+                              0,
                             )}
                           </TableCell>
                         </TableRow>
@@ -397,13 +397,13 @@ export default function DailyTransactionPage() {
                           <TableCell
                             title={
                               securityList.find(
-                                (s) => s.id == transaction.securityId
+                                (s) => s.id == transaction.securityId,
                               )?.name
                             }
                           >
                             {
                               securityList.find(
-                                (s) => s.id == transaction.securityId
+                                (s) => s.id == transaction.securityId,
                               )?.shortName
                             }
                           </TableCell>
@@ -447,7 +447,7 @@ export default function DailyTransactionPage() {
                             {saleTransactionData.reduce(
                               (accumulator, currentValue) =>
                                 accumulator + currentValue.quantity,
-                              0
+                              0,
                             )}
                           </TableCell>
                           <TableCell></TableCell>
@@ -455,7 +455,7 @@ export default function DailyTransactionPage() {
                             {saleTransactionData.reduce(
                               (accumulator, currentValue) =>
                                 accumulator + currentValue.amount,
-                              0
+                              0,
                             )}
                           </TableCell>
                         </TableRow>
@@ -520,14 +520,14 @@ export default function DailyTransactionPage() {
                                   aria-expanded={securityPopoverOpen}
                                   className={cn(
                                     " justify-between w-full",
-                                    !field.value && "text-muted-foreground"
+                                    !field.value && "text-muted-foreground",
                                   )}
                                 >
                                   {field.value
                                     ? (() => {
                                         const security = securityList.find(
                                           (security) =>
-                                            security.id === field.value
+                                            security.id === field.value,
                                         );
                                         return `${security?.shortName}`;
                                       })()
@@ -551,7 +551,7 @@ export default function DailyTransactionPage() {
                                         onSelect={() => {
                                           form.setValue(
                                             "securityId",
-                                            security.id
+                                            security.id,
                                           );
                                           setSecurityPopoverOpen(false);
                                           form.trigger("securityId");
@@ -563,7 +563,7 @@ export default function DailyTransactionPage() {
                                             "ml-auto",
                                             security.id === field.value
                                               ? "opacity-100"
-                                              : "opacity-0"
+                                              : "opacity-0",
                                           )}
                                         />
                                       </CommandItem>
@@ -599,7 +599,7 @@ export default function DailyTransactionPage() {
                               {Object.values(SecurityAdditionNature).map(
                                 (s) => (
                                   <SelectItem value={s}>{s}</SelectItem>
-                                )
+                                ),
                               )}
                             </SelectContent>
                           </Select>
@@ -627,7 +627,7 @@ export default function DailyTransactionPage() {
                             {Object.values(SecurityClassificationAsPerNFRS).map(
                               (s) => (
                                 <SelectItem value={s}>{s}</SelectItem>
-                              )
+                              ),
                             )}
                           </SelectContent>
                         </Select>
@@ -656,7 +656,7 @@ export default function DailyTransactionPage() {
                                 form.setValue(
                                   "amount",
                                   Number(e.target.value) *
-                                    Number(form.getValues("price"))
+                                    Number(form.getValues("price")),
                                 );
                                 form.trigger("amount");
                               }
@@ -687,7 +687,7 @@ export default function DailyTransactionPage() {
                                 form.setValue(
                                   "amount",
                                   Number(e.target.value) *
-                                    Number(form.getValues("quantity"))
+                                    Number(form.getValues("quantity")),
                                 );
                                 form.trigger("amount");
                               }
@@ -719,9 +719,9 @@ export default function DailyTransactionPage() {
                                   Number(
                                     Number(
                                       Number(e.target.value) /
-                                        form.getValues("quantity")
-                                    ).toFixed(2)
-                                  )
+                                        form.getValues("quantity"),
+                                    ).toFixed(2),
+                                  ),
                                 );
                                 form.trigger("price");
                               }
