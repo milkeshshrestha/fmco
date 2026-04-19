@@ -93,10 +93,10 @@ const UploadForm = () => {
                   <LoaderCircleIcon className="ml-2 h-4 w-4 animate-spin" />
                 </span>
               </Button>
-              <Button className="" variant="secondary" asChild>
+              <Button className="" variant="secondary" render={
                 <Link href="/documents/shareholder_upload_template.xlsx">
                   Download Sample
-                </Link>
+                </Link>}>
               </Button>
             </div>
           </form>

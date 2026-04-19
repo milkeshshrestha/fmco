@@ -8,7 +8,7 @@ import { Share, ShareHistory } from "@prisma/client";
 import getDataFromExcel from "@/data/extractExcel";
 import getDuplicateArray from "@/services/getDuplicate";
 
-export async function POST(request: NextRequest, res: NextResponse) {
+export async function POST(request: NextRequest) {
   let message = "";
   try {
     const formData = Object.fromEntries(await request.formData()) as z.infer<
@@ -34,8 +34,8 @@ export async function POST(request: NextRequest, res: NextResponse) {
               row.shareholderNumber
             } 
               . Message:${aggregateErrors(
-                validationResponse.error.flatten().fieldErrors
-              )}`
+                validationResponse.error.flatten().fieldErrors,
+              )}`,
           );
     }
     //console.log(errorRows);
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
     //find and restrct duplicate shareholder number
     const duplicateShareholderInExcel = getDuplicateArray(
       validatedDataFromExcel,
-      "shareholderNumber"
+      "shareholderNumber",
     );
     if (duplicateShareholderInExcel.length > 0) {
       message = `Error: Duplicate shareholder number found: ${duplicateShareholderInExcel
@@ -64,16 +64,18 @@ export async function POST(request: NextRequest, res: NextResponse) {
     });
     if (shareholdersFromDb.length !== rows.length) {
       const shareholderNumbersFromDB = shareholdersFromDb.map(
-        (sh) => sh.number
+        (sh) => sh.number,
       );
       const nf = validatedDataFromExcel
         .filter(
           (shareFromExcel) =>
-            !shareholderNumbersFromDB.includes(shareFromExcel.shareholderNumber)
+            !shareholderNumbersFromDB.includes(
+              shareFromExcel.shareholderNumber,
+            ),
         )
         .map(
           (shareFromExcel) =>
-            `Shareholders not found for number: ${shareFromExcel.shareholderNumber}`
+            `Shareholders not found for number: ${shareFromExcel.shareholderNumber}`,
         );
 
       message = nf.join(", ");
@@ -92,17 +94,17 @@ export async function POST(request: NextRequest, res: NextResponse) {
     for (const [index, share] of validatedDataFromExcel.entries()) {
       {
         const shareholder = shareholdersFromDb.find(
-          (shFromDb) => shFromDb.number == share.shareholderNumber
+          (shFromDb) => shFromDb.number == share.shareholderNumber,
         );
 
         const revisedUnitsOfShare = Number(
-          (shareholder!.ownedUnitsOfShare + share.unitsOfShare).toFixed(2)
+          (shareholder!.ownedUnitsOfShare + share.unitsOfShare).toFixed(2),
         );
         const revisedWacc = Number(
           (
             (shareholder!.wacc * shareholder!.ownedUnitsOfShare + share.cost) /
             revisedUnitsOfShare
-          ).toFixed(4)
+          ).toFixed(4),
         );
 
         operations.push(
@@ -122,7 +124,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
                 },
               },
             },
-          })
+          }),
         );
         sharesToCreate.push({
           unitsOfShare: share.unitsOfShare,
@@ -150,12 +152,12 @@ export async function POST(request: NextRequest, res: NextResponse) {
     operations.push(
       prisma.share.createMany({
         data: sharesToCreate,
-      })
+      }),
     );
     operations.push(
       prisma.shareHistory.createMany({
         data: shareHistoryToCreate,
-      })
+      }),
     );
 
     const results = await prisma.$transaction(operations);
@@ -163,12 +165,12 @@ export async function POST(request: NextRequest, res: NextResponse) {
 
     return NextResponse.json(
       { success: true, message: message },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (e: any) {
     return NextResponse.json(
       { success: false, message: message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

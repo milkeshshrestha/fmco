@@ -18,7 +18,7 @@ type DividendDataFromExcel = {
   receivingBankAccount: string | null;
   remarks: string;
 };
-export async function POST(request: NextRequest, res: NextResponse) {
+export async function POST(request: NextRequest) {
   let message: string = "";
   let success: boolean = false;
   try {
@@ -40,13 +40,13 @@ export async function POST(request: NextRequest, res: NextResponse) {
 
     if (!dividendUploadFormValidationResponse.success) {
       message = aggregateErrors(
-        dividendUploadFormValidationResponse.error.flatten().fieldErrors
+        dividendUploadFormValidationResponse.error.flatten().fieldErrors,
       );
       throw new Error();
     }
 
     const data = await getDataFromExcel(
-      dividendUploadFormValidationResponse.data!.file
+      dividendUploadFormValidationResponse.data!.file,
     );
     //console.log(data);
     // Convert the data to JSON
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
               row.shareholderNumber +
               ". Message:" +
               aggregateErrors(validationResponse.error.flatten().fieldErrors)
-            }`
+            }`,
           );
     }
     if (errorRows.length > 0) {
@@ -90,24 +90,24 @@ export async function POST(request: NextRequest, res: NextResponse) {
     }
     //check if shareholder number exists
     const shareholderNumberListInExcelFile = validatedDataFromExcel.map(
-      (r) => r.shareholderNumber
+      (r) => r.shareholderNumber,
     );
     const shareholdersFromDb = await prisma.shareholder.findMany({
       where: { number: { in: shareholderNumberListInExcelFile } },
     });
     if (shareholdersFromDb.length !== rows.length) {
       const shareholderNumbersFromDB = shareholdersFromDb.map(
-        (sh) => sh.number
+        (sh) => sh.number,
       );
 
       let nf: string[] = [];
       validatedDataFromExcel.forEach((dividendFromExcel, index) => {
         const sh = shareholdersFromDb.find(
-          (shFromDb) => shFromDb.number == dividendFromExcel.shareholderNumber
+          (shFromDb) => shFromDb.number == dividendFromExcel.shareholderNumber,
         );
         if (!sh)
           nf.push(
-            dividendFromExcel.shareholderNumber + " at SNo. " + (index + 1)
+            dividendFromExcel.shareholderNumber + " at SNo. " + (index + 1),
           );
         // if (sh)
         //   sh.dividendBalance += parseFloat(dividendFromExcel.amount.toFixed(2));
@@ -129,10 +129,10 @@ export async function POST(request: NextRequest, res: NextResponse) {
           ...rest,
           amount: parseFloat(rest.amount.toFixed(2)), //convert to float with 2 decimal places
           shareholderId: shareholdersFromDb.find(
-            (sh) => sh.number == shareholderNumber
+            (sh) => sh.number == shareholderNumber,
           )!.id, //! for making sure that shareholder exists
         };
-      }
+      },
     );
     const { file, ...dividendUploadHistory } =
       dividendUploadFormValidationResponse.data!;

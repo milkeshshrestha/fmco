@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Dividend } from "@prisma/client";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
@@ -37,10 +37,13 @@ const DeleteDividendEntryDialog = ({
 
   return (
     <Dialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
-      <DialogTrigger asChild>
-        <Button variant={"outline"} title="Delete Dividend Upload History">
+      <DialogTrigger>
+        <div
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+          title="Delete Dividend Upload History"
+        >
           <Trash2Icon className="text-red-500" />
-        </Button>
+        </div>
       </DialogTrigger>
       <DialogContent aria-describedby="">
         <DialogHeader>

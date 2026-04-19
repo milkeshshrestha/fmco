@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { DividendUploadHistory } from "@prisma/client";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
@@ -30,7 +30,7 @@ const DeleteDividendUploadDialog = ({
 
   const deleteConfirmHandler = async () => {
     const response = await deleteDividendUploadHistory(
-      dividendUploadHistory.id
+      dividendUploadHistory.id,
     );
     setOpenDeleteDialog(false);
     if (response.success) onSuccess();
@@ -39,10 +39,13 @@ const DeleteDividendUploadDialog = ({
 
   return (
     <Dialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
-      <DialogTrigger asChild>
-        <Button variant={"outline"} title="Delete Dividend Upload History">
+      <DialogTrigger>
+        <div
+          className={`${buttonVariants({ variant: "destructive", size: "sm" })} `}
+          title="Delete Dividend Upload History"
+        >
           <Trash2Icon className="text-red-500" />
-        </Button>
+        </div>
       </DialogTrigger>
       <DialogContent aria-describedby="">
         <DialogHeader>

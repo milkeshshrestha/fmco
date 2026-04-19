@@ -23,7 +23,6 @@ import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { CircleUserRound, LogOut, SearchIcon } from "lucide-react";
 import { auth, signOut } from "@/auth";
 import { revalidatePath } from "next/cache";
-import { useTheme } from "next-themes";
 import ThemeSwitchButton from "./themeSwitchButton";
 import { SidebarTrigger } from "./ui/sidebar";
 

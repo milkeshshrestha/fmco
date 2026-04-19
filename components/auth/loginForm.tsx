@@ -14,7 +14,7 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { AlertCircleIcon, EyeIcon, EyeOffIcon } from "lucide-react";
-import { loginAction } from "@/actions/user/login";
+import loginAction from "@/actions/user/login";
 import { useState } from "react";
 import { Card, CardFooter, CardHeader } from "../ui/card";
 import Link from "next/link";

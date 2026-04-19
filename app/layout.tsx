@@ -1,13 +1,26 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar";
 import { cookies } from "next/headers";
 import { SiteHeader } from "@/components/site-header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/components/next-themes";
+//import { ThemeProvider } from "@/components/next-themes";
+import { ThemeProvider } from "@wrksz/themes/next";
+import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+
 export const metadata: Metadata = {
   title: "Fund Management Co",
   description: "Subsidiary of ADBL",
@@ -23,7 +36,7 @@ export default async function RootLayout({
   const session = await auth();
   const isAuthenticated = !!session;
   return (
-    <html suppressHydrationWarning>
+    <html className={cn("font-sans", inter.variable)}>
       <body>
         <SessionProvider>
           <ThemeProvider
@@ -33,6 +46,17 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             {isAuthenticated ? (
+              // <SidebarProvider>
+              //   <Sidebar collapsible="icon" variant="inset">
+              //     <SidebarHeader />
+              //     <SidebarContent>test</SidebarContent>
+              //   </Sidebar>
+              //   <main>
+              //     <SidebarTrigger />
+              //     {children}
+              //   </main>
+              // </SidebarProvider>
+
               <SidebarProvider
                 defaultOpen={defaultSidebarOpen}
                 style={

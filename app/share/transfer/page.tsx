@@ -1,4 +1,4 @@
-"use server ";
+"use server";
 import ShareTransferForm from "@/components/shareTransferForm";
 import { getAllShareholders } from "@/data/sharedholderData";
 

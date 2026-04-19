@@ -14,7 +14,7 @@ import Link from "next/link";
 import { getAllDividendUploadList } from "@/data/dividend";
 import { DividendUploadHistory } from "@prisma/client";
 import DeleteDividendUploadDialog from "@/components/deleteDividendUpload";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 export default function DividendUploadHistoryPage() {
   const [dividendUploadHistory, setDividendUploadHistory] =
@@ -60,16 +60,24 @@ export default function DividendUploadHistoryPage() {
                     <TableCell>{uploadhistory.remarks}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant={"outline"} asChild>
-                          <Link href={`upload/${uploadhistory.id}`}>View</Link>
-                        </Button>
+                        <div>
+                          <Link
+                            className={buttonVariants({
+                              variant: "outline",
+                              size: "sm",
+                            })}
+                            href={`upload/${uploadhistory.id}`}
+                          >
+                            View
+                          </Link>
+                        </div>
                         <DeleteDividendUploadDialog
                           dividendUploadHistory={uploadhistory}
                           onSuccess={() => {
                             setDividendUploadHistory((prev) =>
                               prev?.filter(
-                                (item) => item.id !== uploadhistory.id
-                              )
+                                (item) => item.id !== uploadhistory.id,
+                              ),
                             );
                           }}
                         />

@@ -94,7 +94,7 @@ export default function SingleDividendCreateForm() {
                         open={receivingShareholderOpen}
                         onOpenChange={setReceivingShareholderOpen}
                       >
-                        <PopoverTrigger asChild>
+                        <PopoverTrigger>
                           {/* adding div is  important else dont work */}
                           <div>
                             {/*type button prevents form auto submt*/}
@@ -105,14 +105,14 @@ export default function SingleDividendCreateForm() {
                               aria-expanded={receivingShareholderOpen}
                               className={cn(
                                 " justify-between w-full",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value
                                 ? (() => {
                                     const shareholder = shareholderList.find(
                                       (shareholder) =>
-                                        shareholder.number === field.value
+                                        shareholder.number === field.value,
                                     );
                                     return `${shareholder?.name} (${shareholder?.number})`;
                                   })()
@@ -141,7 +141,7 @@ export default function SingleDividendCreateForm() {
                                     onSelect={() => {
                                       form.setValue(
                                         "shareholderNumber",
-                                        shareholder.number
+                                        shareholder.number,
                                       );
                                       setReceivingShareholderOpen(false);
                                       form.trigger("shareholderNumber");
@@ -155,7 +155,7 @@ export default function SingleDividendCreateForm() {
                                         "ml-auto",
                                         shareholder.number === field.value
                                           ? "opacity-100"
-                                          : "opacity-0"
+                                          : "opacity-0",
                                       )}
                                     />
                                   </CommandItem>

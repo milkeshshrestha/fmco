@@ -183,11 +183,15 @@ export default function UploadForm() {
                   <LoaderCircleIcon className={`animate-spin`} />
                 </span>
               </Button>
-              <Button className="" variant="secondary" asChild>
-                <Link href="/documents/share_upload_template.xlsx">
-                  Download Sample
-                </Link>
-              </Button>
+              <Button
+                className=""
+                variant="secondary"
+                render={
+                  <Link href="/documents/share_upload_template.xlsx">
+                    Download Sample
+                  </Link>
+                }
+              ></Button>
             </div>
           </form>
         </Form>

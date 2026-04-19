@@ -1,3 +1,4 @@
+"use client";
 import {
   ActivityIcon,
   AlignLeftIcon,
@@ -11,6 +12,7 @@ import {
   ChartCandlestickIcon,
   ChartLineIcon,
   ChevronRight,
+  ChevronsUpDown,
   FileTextIcon,
   GalleryHorizontalEndIcon,
   HandCoinsIcon,
@@ -35,6 +37,7 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -42,12 +45,23 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
+import Link from "next/link";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 // Menu items.
 const items = [
@@ -236,77 +250,84 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { isMobile } = useSidebar();
   return (
     <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
-              <a href="/">
-                <div className="bg-green-800 p-1 rounded-md">
-                  <MountainIcon className="!size-4 text-white" />
+            <SidebarMenuButton className="">
+              <Link href={"/"} className="flex items-center gap-2">
+                <div className="bg-green-800 p-1  rounded-md">
+                  <MountainIcon className="!size-4 text-white" />{" "}
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">Share Register</span>
-                  <span className="">FMCO</span>
-                </div>
-              </a>
+                <span className="group-data-[collapsed=true]:hidden">
+                  <div className="flex flex-col py-5 gap-1 leading-none inline-block">
+                    <p className=" pb-1">Share Register</p>
+                    <p className=" text-[10px]">FMCO</p>
+                  </div>
+                </span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((menuItem) =>
-                menuItem.groupName !== "" ? (
-                  <Collapsible
-                    defaultOpen={false}
-                    key={menuItem.groupName}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      {/* <CollapsibleTrigger asChild> */}
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton>
+          <SidebarMenu>
+            {items.map((menuItem) =>
+              menuItem.groupName !== "" ? (
+                <Collapsible
+                  defaultOpen={false}
+                  key={menuItem.groupName}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger
+                      className="w-full"
+                      render={
+                        <SidebarMenuButton className="group">
                           <menuItem.icon />
                           <span>{menuItem.groupName}</span>
-                          <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                          <ChevronRight className="ms-auto transition-transform duration-200 group-aria-[expanded=true]:rotate-90" />
                         </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <SidebarMenuSub className="border-gray-300 dark:border-gray-600">
-                          {menuItem.submenuItems?.map((submenuItem) => (
-                            <SidebarMenuSubItem key={submenuItem.title}>
-                              <SidebarMenuSubButton asChild>
-                                <a href={submenuItem.url}>
-                                  <submenuItem.icon />
-                                  <span>{submenuItem.title}</span>
-                                </a>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
-                ) : (
-                  <SidebarMenuItem key={menuItem.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={menuItem.url}>
-                        <menuItem.icon />
-                        <span>{menuItem.title}</span>
-                      </a>
-                    </SidebarMenuButton>
+                      }
+                    ></CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub className="border-gray-300 dark:border-gray-600">
+                        {menuItem.submenuItems?.map((subItem) => (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton
+                              render={
+                                <Link href={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              }
+                            ></SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
                   </SidebarMenuItem>
-                ),
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
+                </Collapsible>
+              ) : (
+                <SidebarMenuItem key={menuItem.title}>
+                  <SidebarMenuButton>
+                    <Link
+                      href={menuItem.url || "#"}
+                      className="flex items-center gap-2"
+                    >
+                      <menuItem.icon className="h-5 w-5 shrink-0" />
+
+                      <span className="group-data-[collapsed=true]:hidden">
+                        {menuItem.title}
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ),
+            )}
+          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

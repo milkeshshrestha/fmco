@@ -15,13 +15,13 @@ import { NextRequest } from "next/server";
 //see https://authjs.dev/guides/edge-compatibility
 
 const { auth } = NextAuth(authConfig);
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const isLoggedIn = await auth();
   const { nextUrl } = req;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.test(nextUrl.pathname);
   const isAuthRoute = authRoutes.some((authRoute) =>
-    nextUrl.pathname.startsWith(authRoute)
+    nextUrl.pathname.startsWith(authRoute),
   );
   if (isApiAuthRoute) {
     return;

@@ -1,0 +1,919 @@
+{
+  "version": 1,
+  "rootPath": "E:\\js\\fmco",
+  "lastScan": "2026-04-19T13:50:22.715Z",
+  "entries": {
+    "E:/js/fmco/actions/dividend/createSingle.ts": {
+      "mtime": 1751440982359.718,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/dividend/deleteDividendEntry.ts": {
+      "mtime": 1751439912139.57,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/dividend/deleteDividendUploadHistory.ts": {
+      "mtime": 1751461614101.3506,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/share/transferShare.ts": {
+      "mtime": 1743131439163.964,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/shareholder/createShareholder.ts": {
+      "mtime": 1743915814233.1562,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/shareholder/getShareholders.ts": {
+      "mtime": 1742783946025.1448,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/trade/createSecurity.ts": {
+      "mtime": 1747932128554.762,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/trade/deleteSecurity.ts": {
+      "mtime": 1747935558180.775,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/trade/recordSecurityTransaction.ts": {
+      "mtime": 1758449123295.9102,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/user/changePassword.ts": {
+      "mtime": 1743934805233.05,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/user/createUser.tsx": {
+      "mtime": 1743909646662.0942,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/user/login.tsx": {
+      "mtime": 1743923864193.9792,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/actions/user/passwordReset.ts": {
+      "mtime": 1743923966631.0461,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/api/auth/[...nextauth]/route.ts": {
+      "mtime": 1743249349818.6855,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/api/dividend/route.tsx": {
+      "mtime": 1776578376572.8665,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/api/share/upload/route.tsx": {
+      "mtime": 1776578435332.572,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/api/shareholder/route.tsx": {
+      "mtime": 1776578453320.373,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/api/user/route.ts": {
+      "mtime": 1743249349818.6855,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/auth/change-password/[id]/page.tsx": {
+      "mtime": 1743249349818.6855,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/auth/layout.tsx": {
+      "mtime": 1743913432668.497,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/auth/login/page.tsx": {
+      "mtime": 1743913090688.2634,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/dividend/balance/page.tsx": {
+      "mtime": 1751464705972.9253,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/dividend/page.tsx": {
+      "mtime": 1743931530379.6067,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/dividend/single/create/page.tsx": {
+      "mtime": 1743684746645.019,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/dividend/single/page.tsx": {
+      "mtime": 1743685712772.4966,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/dividend/upload/[id]/page.tsx": {
+      "mtime": 1743685712787.4717,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/dividend/upload/new/page.tsx": {
+      "mtime": 1776605673024.7922,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/dividend/upload/page.tsx": {
+      "mtime": 1776605397020.3005,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/layout.tsx": {
+      "mtime": 1776587878659.0764,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/not-found.tsx": {
+      "mtime": 1743354663535.758,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/page copy.tsx": {
+      "mtime": 1743930708626.1907,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/page.tsx": {
+      "mtime": 1751439401159.4297,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/share-history/page.tsx": {
+      "mtime": 1748494320922.7222,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/share/on/page.tsx": {
+      "mtime": 1751464706004.9463,
+      "findingsCount": 1,
+      "findings": [
+        {
+          "file": "app/share/on/page.tsx",
+          "line": 90,
+          "column": 7,
+          "rule": "prefer-shadcn-form",
+          "violation": "Raw <form> detected. Use <Form> from shadcn/ui with react-hook-form.",
+          "suggestion": "Use <Form> from shadcn/ui.",
+          "element": "form",
+          "replacement": "Form",
+          "sourceLine": "      <form onSubmit={handleSubmit} className=\"space-y-4\">\r",
+          "suggestedLine": "<Form>"
+        }
+      ],
+      "warnings": []
+    },
+    "E:/js/fmco/app/share/page.tsx": {
+      "mtime": 1751464705943.9292,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/share/transfer/page.tsx": {
+      "mtime": 1776526230337.04,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/share/upload/[id]/page.tsx": {
+      "mtime": 1743411990156.7927,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/share/upload/new/page.tsx": {
+      "mtime": 1776605673076.8835,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/share/upload/page.tsx": {
+      "mtime": 1748495327378.56,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/shareholder/[id]/edit/page.tsx": {
+      "mtime": 1743249349818.6855,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/shareholder/[id]/page.tsx": {
+      "mtime": 1743738609970.6826,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/shareholder/create/page.tsx": {
+      "mtime": 1743249349818.6855,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/shareholder/page.tsx": {
+      "mtime": 1751464705915.6133,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/shareholder/upload/page.tsx": {
+      "mtime": 1776605672837.9966,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/security/[id]/edit/page.tsx": {
+      "mtime": 1747932766006.5088,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/security/balance/bynfrs/page.tsx": {
+      "mtime": 1762619487616.4424,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/security/balance/bysecurity/page.tsx": {
+      "mtime": 1762648308122.428,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/security/create/page.tsx": {
+      "mtime": 1747928258516.4653,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/security/page.tsx": {
+      "mtime": 1747933955567.0496,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/transaction/daily/page.tsx": {
+      "mtime": 1776605672966.673,
+      "findingsCount": 1,
+      "findings": [
+        {
+          "file": "app/trade/transaction/daily/page.tsx",
+          "line": 480,
+          "column": 15,
+          "rule": "prefer-shadcn-scroll-area",
+          "violation": "Raw <div> with overflow scroll/auto class detected. Use <ScrollArea> from shadcn/ui.",
+          "suggestion": "Use <ScrollArea> from shadcn/ui.",
+          "element": "div",
+          "replacement": "ScrollArea",
+          "sourceLine": "              <div className=\"space-y-4 max-h-[400px] overflow-auto pb-4\">\r",
+          "suggestedLine": "<ScrollArea>"
+        }
+      ],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/transaction/gain/bysecurity/bynfrs/page.tsx": {
+      "mtime": 1763131400813.1018,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/transaction/gain/bysecurity/page.tsx": {
+      "mtime": 1762648220285.7202,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/transaction/history/page.tsx": {
+      "mtime": 1769244784629.4246,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/trade/transaction/historyWithWacc/page.tsx": {
+      "mtime": 1769261215114.9707,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/user/create/page.tsx": {
+      "mtime": 1747570588085.273,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/app/user/page.tsx": {
+      "mtime": 1776605672787.2502,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/auth.config.ts": {
+      "mtime": 1723757211306.799,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/auth.ts": {
+      "mtime": 1743938123363.6575,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/ListShares.tsx": {
+      "mtime": 1743928233013.6582,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/Navbar.tsx": {
+      "mtime": 1776577833547.9395,
+      "findingsCount": 2,
+      "findings": [
+        {
+          "file": "components/Navbar.tsx",
+          "line": 71,
+          "column": 19,
+          "rule": "prefer-shadcn-form",
+          "violation": "Raw <form> detected. Use <Form> from shadcn/ui with react-hook-form.",
+          "suggestion": "Use <Form> from shadcn/ui.",
+          "element": "form",
+          "replacement": "Form",
+          "sourceLine": "                  <form\r",
+          "suggestedLine": "<Form>"
+        },
+        {
+          "file": "components/Navbar.tsx",
+          "line": 78,
+          "column": 21,
+          "rule": "prefer-shadcn-button",
+          "violation": "Raw <button> detected. Use <Button> from shadcn/ui.",
+          "suggestion": "Use <Button> from shadcn/ui.",
+          "element": "button",
+          "replacement": "Button",
+          "sourceLine": "                    <button type=\"submit\" className=\"\">\r",
+          "suggestedLine": "<Button>"
+        }
+      ],
+      "warnings": []
+    },
+    "E:/js/fmco/components/UserListTable.tsx": {
+      "mtime": 1743249349351.841,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/ZodError.tsx": {
+      "mtime": 1743249349818.6855,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/adAndBsDateInputWithToggle.tsx": {
+      "mtime": 1747879418529.341,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/auth/changePasswordForm.tsx": {
+      "mtime": 1743918778816.256,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/auth/loginForm.tsx": {
+      "mtime": 1776525968621.051,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/createEditSecurity.tsx": {
+      "mtime": 1747933170309.6445,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/createEditShareholder.tsx": {
+      "mtime": 1747013837609.2559,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/deleteDividendSingleEntry.tsx": {
+      "mtime": 1776605559721.6494,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/deleteDividendUpload.tsx": {
+      "mtime": 1776605672756.0557,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/dividendHistoryOfShareholder.tsx": {
+      "mtime": 1751391501115.137,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/dividendList.tsx": {
+      "mtime": 1751461060738.4988,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/dividendPaymentForm.tsx": {
+      "mtime": 1747015726499.306,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/next-themes.tsx": {
+      "mtime": 1776577846580.4785,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/securityList.tsx": {
+      "mtime": 1747935802826.7163,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/shareHistory.tsx": {
+      "mtime": 1743755275046.0598,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/shareTransferForm.tsx": {
+      "mtime": 1743648668935.4358,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/shareTransferHistory.tsx": {
+      "mtime": 1743754998241.9807,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/shareholderInformation.tsx": {
+      "mtime": 1743755334281.104,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/sidebar.tsx": {
+      "mtime": 1776605183039.7788,
+      "findingsCount": 1,
+      "findings": [
+        {
+          "file": "components/sidebar.tsx",
+          "line": 261,
+          "column": 17,
+          "rule": "prefer-shadcn-card",
+          "violation": "Custom styled <div> detected. Use <Card> from shadcn/ui.",
+          "suggestion": "Use <Card> from shadcn/ui.",
+          "element": "div",
+          "replacement": "Card",
+          "sourceLine": "                <div className=\"bg-green-800 p-1  rounded-md\">\r",
+          "suggestedLine": "<Card>"
+        }
+      ],
+      "warnings": []
+    },
+    "E:/js/fmco/components/sign-out.tsx": {
+      "mtime": 1743921777200.8154,
+      "findingsCount": 1,
+      "findings": [
+        {
+          "file": "components/sign-out.tsx",
+          "line": 7,
+          "column": 5,
+          "rule": "prefer-shadcn-button",
+          "violation": "Raw <button> detected. Use <Button> from shadcn/ui.",
+          "suggestion": "Use <Button> from shadcn/ui.",
+          "element": "button",
+          "replacement": "Button",
+          "sourceLine": "    <button onClick={async () => await signOut()} className=\"w-full\">\r",
+          "suggestedLine": "<Button>"
+        }
+      ],
+      "warnings": []
+    },
+    "E:/js/fmco/components/site-header.tsx": {
+      "mtime": 1743923864121.6797,
+      "findingsCount": 2,
+      "findings": [
+        {
+          "file": "components/site-header.tsx",
+          "line": 47,
+          "column": 19,
+          "rule": "prefer-shadcn-form",
+          "violation": "Raw <form> detected. Use <Form> from shadcn/ui with react-hook-form.",
+          "suggestion": "Use <Form> from shadcn/ui.",
+          "element": "form",
+          "replacement": "Form",
+          "sourceLine": "                  <form",
+          "suggestedLine": "<Form>"
+        },
+        {
+          "file": "components/site-header.tsx",
+          "line": 54,
+          "column": 21,
+          "rule": "prefer-shadcn-button",
+          "violation": "Raw <button> detected. Use <Button> from shadcn/ui.",
+          "suggestion": "Use <Button> from shadcn/ui.",
+          "element": "button",
+          "replacement": "Button",
+          "sourceLine": "                    <button type=\"submit\" className=\"w-full text-left\">",
+          "suggestedLine": "<Button>"
+        }
+      ],
+      "warnings": []
+    },
+    "E:/js/fmco/components/table/data-table.tsx": {
+      "mtime": 1758897043417.8813,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/table/pagination.tsx": {
+      "mtime": 1743249349820.6897,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/themeSwitchButton.tsx": {
+      "mtime": 1776577866051.2832,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/ui/NepaliDatePickerWrapper.tsx": {
+      "mtime": 1747794823226.0664,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/ui/collapsible.tsx": {
+      "mtime": 1776583595850.996,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/ui/sonner.tsx": {
+      "mtime": 1776575947992.825,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/ui/table/data-table.tsx": {
+      "mtime": 1751464052241.4502,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/ui/table/pagination.tsx": {
+      "mtime": 1751464354882.1409,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/uploadDetail.tsx": {
+      "mtime": 1751464705874.6313,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/components/waccHistory.tsx": {
+      "mtime": 1743754939927.4443,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/dividend.ts": {
+      "mtime": 1743647346307.9072,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/extractExcel.ts": {
+      "mtime": 1744082848809.7222,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/getSecurityDetail.ts": {
+      "mtime": 1763252355854.031,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/marketData.ts": {
+      "mtime": 1763253533933.6165,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/shareData.ts": {
+      "mtime": 1743928569267.8743,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/shareHistory.ts": {
+      "mtime": 1743265751332.5212,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/shareTransferHistory.ts": {
+      "mtime": 1743265745937.7417,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/shareUpload.ts": {
+      "mtime": 1743408710384.264,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/sharedholderData.ts": {
+      "mtime": 1751436680259.0627,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/trade.ts": {
+      "mtime": 1769244453485.056,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/userData.tsx": {
+      "mtime": 1723876748414.8489,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/data/wacc.ts": {
+      "mtime": 1743354940688.811,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/hooks/use-mobile.ts": {
+      "mtime": 1743250900630.3052,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/hooks/use-mobile.tsx": {
+      "mtime": 1743217065993.5498,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/lib/fonts.ts": {
+      "mtime": 1723085682582.1982,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/lib/utils.ts": {
+      "mtime": 1743218331095.7158,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/next-env.d.ts": {
+      "mtime": 1776578506224.5906,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma.config.ts": {
+      "mtime": 1776586605574.209,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma/client.tsx": {
+      "mtime": 1776587725023.1638,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma/prisma/generated/client.d.ts": {
+      "mtime": 1776587190999.2175,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma/prisma/generated/default.d.ts": {
+      "mtime": 1776587190999.2175,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma/prisma/generated/edge.d.ts": {
+      "mtime": 1776587190999.2175,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma/prisma/generated/index.d.ts": {
+      "mtime": 1776587191000.2173,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma/prisma/generated/runtime/client.d.ts": {
+      "mtime": 1776585521025.0754,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/prisma/prisma/generated/runtime/index-browser.d.ts": {
+      "mtime": 1776585521061.2937,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/proxy.ts": {
+      "mtime": 1776514568920.4478,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/route.ts": {
+      "mtime": 1743918698158.2595,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/services/getDuplicate.ts": {
+      "mtime": 1744083878096.6335,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/services/transactionDetail.ts": {
+      "mtime": 1769259283601.3367,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/util/util.ts": {
+      "mtime": 1723218488154.5134,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/util/validateShareholder.tsx": {
+      "mtime": 1743923864149.7214,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/util/zodErrorAggregator.tsx": {
+      "mtime": 1723047095661.6301,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/changePasswordClientSchema.ts": {
+      "mtime": 1723814106974.752,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/dividendSchema.tsx": {
+      "mtime": 1743619231999.0571,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/loginSchema.tsx": {
+      "mtime": 1723634804992.175,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/responseSchema.ts": {
+      "mtime": 1723899046539.7522,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/responseType.tsx": {
+      "mtime": 1723651528706.4724,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/securitySchema.ts": {
+      "mtime": 1747931614854.4148,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/securityTransactionSchema.ts": {
+      "mtime": 1769236994026.6946,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/shareSchema.ts": {
+      "mtime": 1744116289603.9836,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/shareTransferSchema.ts": {
+      "mtime": 1742838330982.615,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/shareholderSchema.tsx": {
+      "mtime": 1747013837543.7522,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/shareholderUploadFormSchema.ts": {
+      "mtime": 1723949126843.2144,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    },
+    "E:/js/fmco/zod.schema/userSchema.tsx": {
+      "mtime": 1723828045271.143,
+      "findingsCount": 0,
+      "findings": [],
+      "warnings": []
+    }
+  }
+}

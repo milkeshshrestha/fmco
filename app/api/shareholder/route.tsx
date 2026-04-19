@@ -7,7 +7,7 @@ import getDataFromExcel from "@/data/extractExcel";
 import { z } from "zod";
 import getDuplicateArray from "@/services/getDuplicate";
 
-export async function POST(request: NextRequest, res: NextResponse) {
+export async function POST(request: NextRequest) {
   let message: string = "";
   try {
     const formData = await request.formData();
@@ -54,8 +54,8 @@ export async function POST(request: NextRequest, res: NextResponse) {
             row.number
           }. Message:
               ${aggregateErrors(
-                validationResponse.error.flatten().fieldErrors
-              )}`
+                validationResponse.error.flatten().fieldErrors,
+              )}`,
         );
       } else validatedDataFromExcel.push(validationResponse.data);
     }
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
     //find and restrct duplicate shareholder number
     const duplicateShareholderInExcel = getDuplicateArray(
       validatedDataFromExcel,
-      "number"
+      "number",
     );
     if (duplicateShareholderInExcel.length > 0) {
       message = `Error: Duplicate shareholder number found: ${duplicateShareholderInExcel
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
           ownedUnitsOfShare: 0,
           dividendBalance: 0,
         },
-      })
+      }),
     );
 
     await prisma.$transaction(operations);
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest, res: NextResponse) {
   } catch (error: any) {
     return NextResponse.json(
       { success: false, message: message },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

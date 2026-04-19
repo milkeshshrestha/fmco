@@ -509,7 +509,7 @@ export default function DailyTransactionPage() {
                             open={securityPopoverOpen}
                             onOpenChange={setSecurityPopoverOpen}
                           >
-                            <PopoverTrigger asChild className="w-full">
+                            <PopoverTrigger className="w-full">
                               {/* adding div is  important else dont work */}
                               <div>
                                 {/*type button prevents form auto submt*/}

@@ -2,8 +2,8 @@
 //this is not function but global variable
 //there is no return statement
 
-import { PrismaClient } from "@prisma/client";
-
+import { PrismaClient } from "./prisma/generated/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 // globalThis
 // globalThis is a special object in JavaScript that gives access to the global scope across any environment (Node.js, browser, etc.).
 // ✅ as unknown as { prisma: PrismaClient | undefined }
@@ -13,11 +13,15 @@ import { PrismaClient } from "@prisma/client";
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL,
+});
 export const prisma =
   globalForPrisma.prisma ??
   (() => {
     console.log("Creating new Prisma client instance...");
     return new PrismaClient({
+      adapter,
       //log: ["query", "info", "warn", "error"],
       log: ["error"],
     });

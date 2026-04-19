@@ -91,7 +91,7 @@ export default function UserListPage() {
                   >
                     Reset PW
                   </Button>
-                  <DialogTrigger asChild></DialogTrigger>
+                  <DialogTrigger></DialogTrigger>
                 </TableCell>
               </TableRow>
             ))}
