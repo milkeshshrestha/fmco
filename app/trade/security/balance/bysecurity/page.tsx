@@ -25,11 +25,23 @@ export default function BalanceSecurityPage() {
       accessorKey: "remainingQuantity",
       header: "Remaining Qty",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.remainingQuantity, 0);
+        return getNumberFormattedWithDiv(total);
+      },
     },
     {
       accessorKey: "remainingCost",
       header: "Cost of Remaining Qty",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.remainingCost, 0);
+        return getNumberFormattedWithDiv(total);
+      },
     },
     {
       accessorKey: "wacc",
@@ -47,7 +59,7 @@ export default function BalanceSecurityPage() {
   const [data, setData] = useState<SecurityBalanceWithoutClassification[]>([]);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [toDate, setToDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [loading, setLoading] = useState<boolean>(false);
   const onClickHandler = async () => {
@@ -57,7 +69,7 @@ export default function BalanceSecurityPage() {
       await getTransactionSummaryBySecurityAndDateWithoutClassification(toDate);
     const resultAfterCostCalc =
       getTransactionResultBySecurityAndDateWithoutClassification(
-        transactionDetail
+        transactionDetail,
       );
 
     const grouped =

@@ -36,10 +36,13 @@ interface DataTableProps<TData, TValue> {
   title: string;
 }
 export const numericFilter: FilterFn<any> = (row, columnId, filterValue) => {
-  const value = row.getValue(columnId);
+  const value = row.getValue(columnId) as number;
+  filterValue = filterValue.toString().toUpperCase();
   // If no filter value, show all rows
-  if (!filterValue || !value) return true;
-  return value.toString().includes(filterValue.toString());
+  if (!filterValue) return true;
+  return isNaN(value)
+    ? "NA".includes(filterValue)
+    : value.toString().includes(filterValue.toString());
 };
 
 export function DataTable<TData, TValue>({
@@ -223,9 +226,11 @@ export const getNumberFormattedWithDiv = (
   maximumFractionDigits: number = 2,
 ) => (
   <div className="text-right">
-    {Intl.NumberFormat("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: maximumFractionDigits,
-    }).format(value)}
+    {isNaN(value)
+      ? "NA"
+      : Intl.NumberFormat("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: maximumFractionDigits,
+        }).format(value)}
   </div>
 );

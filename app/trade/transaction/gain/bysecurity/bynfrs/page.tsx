@@ -10,15 +10,14 @@ import { LoaderCircleIcon } from "lucide-react";
 import {
   DataTable,
   getNumberFormattedWithDiv,
+  numericFilter,
 } from "@/components/table/data-table";
 
 import {
   calculateNfrsGainForSecurityAsOnDate,
-  calculateNfrsGainForSecurityBetweenDate,
-  getSecurityDetailWithNfrsClassificationAsOnDate,
   NfrsGainDetail,
 } from "@/data/getSecurityDetail";
-import { getClosingPriceForSecurities } from "@/data/marketData";
+import { toast, useSonner } from "sonner";
 
 export default function TradeSecuritySummaryBySecurityPage() {
   const columns: ColumnDef<NfrsGainDetail>[] = [
@@ -33,20 +32,35 @@ export default function TradeSecuritySummaryBySecurityPage() {
       accessorKey: "openingQuantity",
       header: "Opening Quantity",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.openingQuantity, 0);
+        return getNumberFormattedWithDiv(total);
+      },
     },
     {
       accessorKey: "openingMarketRate",
       header: "Opening Rate",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      filterFn: numericFilter,
     },
     {
       accessorKey: "openingAmount",
       header: "Opening Market Value",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      filterFn: numericFilter,
       footer: (info) => {
         const total = info.table
           .getFilteredRowModel()
-          .rows.reduce((sum, row) => sum + row.original.openingAmount, 0);
+          .rows.reduce(
+            (sum, row) =>
+              sum +
+              (isNaN(row.original.openingAmount as number)
+                ? 0
+                : (row.original.openingAmount as number)),
+            0,
+          );
         return getNumberFormattedWithDiv(total);
       },
     },
@@ -54,6 +68,13 @@ export default function TradeSecuritySummaryBySecurityPage() {
       accessorKey: "purchaseQuantity",
       header: "Purchase Quantity",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      filterFn: numericFilter,
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.purchaseQuantity, 0);
+        return getNumberFormattedWithDiv(total);
+      },
     },
     {
       accessorKey: "purchaseAmount",
@@ -70,11 +91,19 @@ export default function TradeSecuritySummaryBySecurityPage() {
       accessorKey: "soldQuantity",
       header: "Sold Quantity",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      filterFn: numericFilter,
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.soldQuantity, 0);
+        return getNumberFormattedWithDiv(total);
+      },
     },
     {
       accessorKey: "soldAmount",
       header: "Sold Value",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      filterFn: numericFilter,
       footer: (info) => {
         const total = info.table
           .getFilteredRowModel()
@@ -86,20 +115,36 @@ export default function TradeSecuritySummaryBySecurityPage() {
       accessorKey: "closingQuantity",
       header: "Closing Quantity",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      filterFn: numericFilter,
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.closingQuantity, 0);
+        return getNumberFormattedWithDiv(total);
+      },
     },
     {
       accessorKey: "closingMarketRate",
       header: "Closing Rate",
+      filterFn: numericFilter,
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
     },
     {
       accessorKey: "closingAmount",
       header: "Closing Market Value",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      filterFn: numericFilter,
       footer: (info) => {
         const total = info.table
           .getFilteredRowModel()
-          .rows.reduce((sum, row) => sum + row.original.openingAmount, 0);
+          .rows.reduce(
+            (sum, row) =>
+              sum +
+              (isNaN(row.original.closingAmount as number)
+                ? 0
+                : (row.original.closingAmount as number)),
+            0,
+          );
         return getNumberFormattedWithDiv(total);
       },
     },
@@ -115,6 +160,7 @@ export default function TradeSecuritySummaryBySecurityPage() {
       },
     },
   ];
+  const sonner = useSonner();
   const exportHeaderName = [
     "Name",
     "Short Name",
@@ -136,13 +182,13 @@ export default function TradeSecuritySummaryBySecurityPage() {
   const fyStartDate = BSToAD(
     todayBSMonth > 3
       ? todayBSDate.split("-")[0] + "-04-01"
-      : Number(todayBSDate.split("-")[0]) - 1 + "-04-01"
+      : Number(todayBSDate.split("-")[0]) - 1 + "-04-01",
   );
   const [data, setData] = useState<NfrsGainDetail[]>([]);
   const [fromDate, setFromDate] = useState<string>(fyStartDate);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [toDate, setToDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [loading, setLoading] = useState<boolean>(false);
   const onClickHandler = async () => {
@@ -151,16 +197,22 @@ export default function TradeSecuritySummaryBySecurityPage() {
 
     const data = await calculateNfrsGainForSecurityAsOnDate(
       new Date(fromDate),
-      new Date(toDate)
-    );
+      new Date(toDate),
+    ).catch((error) => {
+      console.error("Error calculating NFRS gain:", error);
+      toast.error("Failed to calculate NFRS gain. Please try again.");
+      setLoading(false);
+      return [];
+    });
     data.sort((a, b) =>
       b.name > a.name
         ? -1
         : b.name === a.name
-        ? b.securityClassificationAsPerNFRS > a.securityClassificationAsPerNFRS
-          ? 1
-          : -1
-        : 1
+          ? b.securityClassificationAsPerNFRS >
+            a.securityClassificationAsPerNFRS
+            ? 1
+            : -1
+          : 1,
     );
     setData(data);
     //console.log("grouped", grouped);

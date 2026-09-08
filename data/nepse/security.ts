@@ -84,7 +84,7 @@ export async function fetchSecurityBriefs(
   // Fetch fresh data
   try {
     const [newState, token] = await getAccessToken(state);
-    console.log("Fetching security briefs from API...");
+    //console.log("Fetching security briefs from API...");
     const securities = await fetchWithRetry(
       `${BASE_URL}/api/nots/security?nonDelisted=false`,
       {
@@ -159,6 +159,7 @@ export async function fetchSecurityDetail(
   try {
     // Get securities list
     const [stateWithSecurities, securities] = await fetchSecurityBriefs(state);
+    //console.log("all securities", securities);
     const security = securities.find(
       (s) => s.symbol.toUpperCase() === normalizedSymbol,
     );
@@ -179,9 +180,9 @@ export async function fetchSecurityDetail(
     const [newState, token] = await getAccessToken(stateWithMarketStatus);
 
     const bodyId = calculateValidBodyId(marketStatus?.id ?? 0);
-    console.log("secutiy id", security.id);
-    console.log("body id", bodyId);
-    console.log("headers", createHeaders(token));
+    // console.log("secutiy id", security.id);
+    // console.log("body id", bodyId);
+    // console.log("headers", createHeaders(token));
     const response = await fetchWithRetry(
       `${BASE_URL}/api/nots/security/${security.id}`,
       {

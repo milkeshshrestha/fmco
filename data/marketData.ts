@@ -1,6 +1,11 @@
 "use server";
 import { SecurityBalanceWithClassification } from "@/services/transactionDetail";
-import { BASE_URL, createHeaders, nepseClient } from "@/data/nepse";
+import {
+  BASE_URL,
+  createHeaders,
+  createNepseError,
+  nepseClient,
+} from "@/data/nepse";
 export async function getClosingPriceForSecurities(
   date: Date,
   securitiesData: SecurityBalanceWithClassification[],
@@ -26,10 +31,10 @@ export async function getClosingPriceForSecurities(
       );
       return {
         ...s,
-        closingMarketRate: marketInfo ? marketInfo.closePrice : 0,
+        closingMarketRate: marketInfo ? marketInfo.closePrice : NaN,
         closingMarketValue: marketInfo
           ? marketInfo.closePrice * s.remainingQuantity
-          : 0,
+          : NaN,
       };
     });
     return { success: true, message: "", data: securitiesWithMarketData };
@@ -47,8 +52,9 @@ async function getMarketPrice(
   //   const marketData = await getClosingPrice(date);
   //   return marketData;
   // }
-  const marketData = await getMarketDataFromAverageHistoryAsOn(date);
 
+  const marketData = await getMarketDataFromAverageHistoryAsOn(date);
+  //console.log("marketData", marketData);
   const unavailableSecurities = [
     ...new Set(
       securitiesData
@@ -61,7 +67,7 @@ async function getMarketPrice(
         .map((item) => item.securityShortName),
     ),
   ];
-  //console.log("unavailableSecurities", unavailableSecurities);
+  // console.log("unavailableSecurities", unavailableSecurities);
 
   const fetchedSecurities =
     unavailableSecurities.length === 0
@@ -71,8 +77,9 @@ async function getMarketPrice(
           unavailableSecurities,
         );
   // console.log("fetchedSecurities", fetchedSecurities);
-  const combinedResults = marketData.data.concat(fetchedSecurities.data);
+  //const combinedResults = marketData.data.concat(fetchedSecurities.data);
   //console.log("combinedResults", combinedResults);
+  //whatever be the result of both functions, return the combined result.
   return {
     success: true,
     message: "",
@@ -131,6 +138,7 @@ async function getLastTransactionDateOfNepse(date: Date): Promise<Date> {
   let transactionDate = new Date(date);
   let res;
   let data;
+  let i: number = 0;
   do {
     res = await fetch(
       `${BASE_URL}/api/nots/market/security/price/${detail.id}?&businessDate=${
@@ -139,7 +147,21 @@ async function getLastTransactionDateOfNepse(date: Date): Promise<Date> {
       { headers: createHeaders(token) },
     );
     transactionDate.setDate(transactionDate.getDate() - 1);
+    console.log(
+      "checking transaction date:",
+      transactionDate.toISOString().split("T")[0],
+    );
     data = await res.json();
+    i++;
+    if (i > 10) {
+      console.error(
+        "Could not find a valid transaction date within 10 days of the given date.",
+      );
+      throw createNepseError(
+        "Could not find a valid transaction date within 10 days of the given date.",
+        "NO_VALID_TRANSACTION_DATE",
+      );
+    }
   } while (data.content.length == 0);
   transactionDate.setDate(transactionDate.getDate() + 1);
   //console.log("using transaction date:", transactionDate);
@@ -157,9 +179,11 @@ async function getMarketDataForGivenSecuritiesOneByOneUsingPriceHistoryAsOn(
   console.log("trying one by one fetch for securities:", securitiesSymbols);
   try {
     const transactionDate = await getLastTransactionDateOfNepse(date);
+    console.log(
+      "Fething 1 by 1 on:" + transactionDate.toISOString().split("T")[0],
+    );
     const responseAll = await Promise.all(
       securitiesSymbols.map(async (symbol) => {
-        //console.log("s fetching market data for:" + symbol);
         try {
           const securityDetail = await nepseClient.getSecurityDetail(symbol);
 
@@ -173,10 +197,13 @@ async function getMarketDataForGivenSecuritiesOneByOneUsingPriceHistoryAsOn(
           const data = await response.json();
           const securityPriceHistoryAsOn: ResponseCustom = data;
 
-          //console.log("fetched data 1 by 1 for :" + symbol); //, securityPriceHistoryAsOn);
+          console.log(
+            "fetched data 1 by 1 for :" + symbol,
+            data.content[0].closePrice,
+          ); //, securityPriceHistoryAsOn);
           return securityPriceHistoryAsOn;
         } catch (err) {
-          //console.error("Error fetching data for symbol:" + symbol);
+          console.error("Error fetching data for symbol:" + symbol);
           return {
             content: [
               {
@@ -243,14 +270,14 @@ async function getMarketDataFromAverageHistoryAsOn(date: Date): Promise<{
   //     headers: createHeaders(token),
   //   }
   // );
-
-  // console.log(responseCustom.data);
-  const transactionDate = await getLastTransactionDateOfNepse(date);
-  console.log("using transaction date for average fetch:", transactionDate);
-  const dateString = transactionDate.toISOString().split("T")[0];
-  const fetchUrl = `${BASE_URL}/api/nots/nepse-data/trading-average?nDays=180&businessDate=${dateString}`;
-  console.log("fetching market data from url:", fetchUrl);
   try {
+    // console.log(responseCustom.data);
+    const transactionDate = await getLastTransactionDateOfNepse(date);
+    console.log("using transaction date for average fetch:", transactionDate);
+    const dateString = transactionDate.toISOString().split("T")[0];
+    const fetchUrl = `${BASE_URL}/api/nots/nepse-data/trading-average?nDays=180&businessDate=${dateString}`;
+    console.log("fetching market data from url:", fetchUrl);
+
     const response = await fetch(
       fetchUrl,
       //"https://nepalstock.com/api/nots/nepse-data/today-price",
@@ -262,8 +289,11 @@ async function getMarketDataFromAverageHistoryAsOn(date: Date): Promise<{
     return { success: true, message: "", data: data };
   } catch (err: any) {
     // Here response.status will be 404, 500, etc.
-    //console.error(`Error: ${response.status} ${response.statusText}`);
+    console.error(
+      `we have error catched at getMarketDataFromAverageHistoryAsOn`,
+    );
     // you can throw an error if you want
+    //throw err;
     return { success: false, message: "Error fetching market data", data: [] };
   }
   //console.log(response);

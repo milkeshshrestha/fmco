@@ -9,11 +9,11 @@ import { LoaderCircleIcon } from "lucide-react";
 import {
   DataTable,
   getNumberFormattedWithDiv,
+  numericFilter,
 } from "@/components/table/data-table";
 import { SecurityBalanceWithClassification } from "@/services/transactionDetail";
 import { toast } from "sonner";
 import { getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData } from "@/data/getSecurityDetail";
-import { getProveObject } from "@/data/nepse/auth";
 
 export default function BalanceSecurityPage() {
   const columns: ColumnDef<SecurityBalanceWithClassification>[] = [
@@ -27,6 +27,12 @@ export default function BalanceSecurityPage() {
       accessorKey: "remainingQuantity",
       header: "Remaining Qty",
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
+      footer: (info) => {
+        const total = info.table
+          .getFilteredRowModel()
+          .rows.reduce((sum, row) => sum + row.original.remainingQuantity, 0);
+        return getNumberFormattedWithDiv(total);
+      },
     },
     {
       accessorKey: "remainingCost",
@@ -47,17 +53,29 @@ export default function BalanceSecurityPage() {
     {
       accessorKey: "closingMarketRate",
       header: "Closing Market Rate",
+      filterFn: numericFilter,
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
     },
     {
       accessorKey: "closingMarketValue",
       header: "Closing Market Value",
+      accessorFn: (row) => {
+        // Check if the primary column is NaN or missing
+        if (isNaN(row.closingMarketRate as number)) {
+          return row.remainingCost; // Fallback to the other column
+        }
+        return row.closingMarketRate;
+      },
       cell: (info) => getNumberFormattedWithDiv(info.getValue<number>()),
       footer: (info) => {
         const total = info.table
           .getFilteredRowModel()
           .rows.reduce(
-            (sum, row) => sum + (row.original.closingMarketValue ?? 0),
+            (sum, row) =>
+              sum +
+              (isNaN(row.original.closingMarketRate as number)
+                ? (row.original.remainingCost as number)
+                : (row.original.closingMarketRate as number)),
             0,
           );
         return getNumberFormattedWithDiv(total);
@@ -83,13 +101,17 @@ export default function BalanceSecurityPage() {
   const onClickHandler = async () => {
     setLoading(true);
     setShowTable(false);
+
     const response =
       await getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
         new Date(toDate),
       );
+    //console.log("response", response);
     if (!response.success) {
       toast.error(response.message);
       setData(response.data);
+      setShowTable(false);
+      setLoading(false);
     } else {
       setData(response.data);
     }
@@ -121,8 +143,10 @@ export default function BalanceSecurityPage() {
           </Button>
         </div>
       </div>
+      {showTable}
       <Separator />
       <div className="pt-6" hidden={!showTable}>
+        {showTable}
         <DataTable
           columns={columns}
           data={data}

@@ -21,8 +21,8 @@ export async function getSecurityDetailWithNfrsClassificationAsOnDate(
     getTransactionResultBySecurityAndDateWithClassification(transactionDetail);
 
   const grouped = getSecurityBalanceWithClassification(resultAfterCostCalc);
-
-  return grouped;
+  const filteredGrouped = grouped.filter((g) => g.remainingQuantity > 0);
+  return filteredGrouped;
 }
 export async function getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
   toDate: Date,
@@ -156,7 +156,7 @@ export async function calculateNfrsGainForSecurityAsOnDate(
     ),
     getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(toDate),
   ]);
-  //console.log("endingPortfolio", endingPortfolio);
+  //console.log("opening", beginingPortfolio);
 
   const purchaseTransactionSummaryBySecurity =
     await getSecuritiesPurchasedBetweenDates(fromDate, toDate);
@@ -216,7 +216,7 @@ export async function calculateNfrsGainForSecurityAsOnDate(
       securityClassificationAsPerNFRS: String(s[1]),
       openingQuantity: beginingDetail ? beginingDetail.remainingQuantity : 0,
       openingAmount: beginingDetail ? beginingDetail.closingMarketValue : 0,
-      openingMarketRate: beginingDetail?.closingMarketRate || 0,
+      openingMarketRate: beginingDetail?.closingMarketRate,
       purchaseQuantity: purchaseDetail ? purchaseDetail._sum.quantity || 0 : 0,
       purchaseAmount: purchaseDetail ? purchaseDetail._sum.amount || 0 : 0,
       soldQuantity: soldDetail ? -(soldDetail._sum.quantity || 0) : 0,

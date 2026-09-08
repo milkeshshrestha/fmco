@@ -105,25 +105,25 @@ export async function initialize(
   };
 
   const [newState] = await fetchSecurityBriefs(globalState);
-  console.log("globalState after initialization before brief", globalState);
+  //console.log("globalState after initialization before brief", globalState);
   globalState = newState;
 }
 
 export async function getMarketStatus(): Promise<MarketStatus> {
   initializationGuard();
-  console.log("globalState before market status fetch", globalState);
+  //console.log("globalState before market status fetch", globalState);
   const [newState, marketStatus] = await fetchMarketStatus(globalState);
   globalState = newState;
-  console.log("globalState after market status fetch", globalState);
+  //console.log("globalState after market status fetch", globalState);
   return marketStatus;
 }
 
 export async function getSecurities(): Promise<SecurityBrief[]> {
   initializationGuard();
-  console.log("globalState before getsecurities()", globalState);
+  //console.log("globalState before getsecurities()", globalState);
   const [newState, securities] = await fetchSecurityBriefs(globalState);
   globalState = newState;
-  console.log("globalState after getsecurities()", globalState);
+  //console.log("globalState after getsecurities()", globalState);
   return securities;
 }
 
@@ -131,13 +131,13 @@ export async function getSecurityDetail(
   symbol: string,
 ): Promise<SecurityDetail> {
   initializationGuard();
-  console.log("globalState before getsecurityDetail fetch", globalState);
+  //console.log("globalState before getsecurityDetail fetch", globalState);
   const [newState, securityDetail] = await fetchSecurityDetail(
     globalState,
     symbol,
   );
   globalState = newState;
-  console.log("globalState after getsecurityDetail fetch", globalState);
+  //console.log("globalState after getsecurityDetail fetch", globalState);
   return securityDetail;
 }
 
