@@ -19,7 +19,7 @@ import { ThemeProvider } from "@wrksz/themes/next";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "Fund Management Co",
@@ -36,27 +36,11 @@ export default async function RootLayout({
   const session = await auth();
   const isAuthenticated = !!session;
   return (
-    <html className={cn("font-sans", inter.variable)}>
+    <html className={cn("font-sans", inter.variable)} suppressHydrationWarning>
       <body>
         <SessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider attribute="class" defaultTheme="light">
             {isAuthenticated ? (
-              // <SidebarProvider>
-              //   <Sidebar collapsible="icon" variant="inset">
-              //     <SidebarHeader />
-              //     <SidebarContent>test</SidebarContent>
-              //   </Sidebar>
-              //   <main>
-              //     <SidebarTrigger />
-              //     {children}
-              //   </main>
-              // </SidebarProvider>
-
               <SidebarProvider
                 defaultOpen={defaultSidebarOpen}
                 style={

@@ -79,7 +79,7 @@ export function DataTable<TData, TValue>({
           rowData[cell.column.id] = cell.getValue();
         }, rowData);
         return rowData;
-      }
+      },
     );
 
     // Step 1: Create a new workbook and a worksheet
@@ -127,7 +127,7 @@ export function DataTable<TData, TValue>({
                         tabIndex={-1}
                         onClick={() =>
                           header.column.toggleSorting(
-                            header.column.getIsSorted() === "asc"
+                            header.column.getIsSorted() === "asc",
                           )
                         }
                       >
@@ -135,7 +135,7 @@ export function DataTable<TData, TValue>({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                         {header.column.getIsSorted() === "asc" ? (
                           <ArrowUp className="ml-2 h-4 w-4" />
@@ -149,7 +149,7 @@ export function DataTable<TData, TValue>({
                         onChange={(event) =>
                           header.column.setFilterValue(event.target.value)
                         }
-                        className="font-sm py-1 h-6 bg-white dark:bg-slate-900"
+                        className="font-sm py-1 h-6 bg-white dark:bg-slate-900 block"
                       />
                     </TableHead>
                   );
@@ -168,7 +168,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id} className="p-2">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

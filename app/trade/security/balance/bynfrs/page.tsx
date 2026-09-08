@@ -13,6 +13,7 @@ import {
 import { SecurityBalanceWithClassification } from "@/services/transactionDetail";
 import { toast } from "sonner";
 import { getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData } from "@/data/getSecurityDetail";
+import { getProveObject } from "@/data/nepse/auth";
 
 export default function BalanceSecurityPage() {
   const columns: ColumnDef<SecurityBalanceWithClassification>[] = [
@@ -57,7 +58,7 @@ export default function BalanceSecurityPage() {
           .getFilteredRowModel()
           .rows.reduce(
             (sum, row) => sum + (row.original.closingMarketValue ?? 0),
-            0
+            0,
           );
         return getNumberFormattedWithDiv(total);
       },
@@ -76,16 +77,15 @@ export default function BalanceSecurityPage() {
   const [data, setData] = useState<SecurityBalanceWithClassification[]>([]);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [toDate, setToDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [loading, setLoading] = useState<boolean>(false);
   const onClickHandler = async () => {
     setLoading(true);
     setShowTable(false);
-
     const response =
       await getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
-        new Date(toDate)
+        new Date(toDate),
       );
     if (!response.success) {
       toast.error(response.message);

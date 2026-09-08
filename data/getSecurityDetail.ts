@@ -8,13 +8,14 @@ import {
 import { getClosingPriceForSecurities } from "@/data/marketData";
 
 import prisma from "@/prisma/client";
+import { getProveObject } from "./nepse/auth";
 
 export async function getSecurityDetailWithNfrsClassificationAsOnDate(
-  toDate: Date
+  toDate: Date,
 ) {
   const transactionDetail =
     await getTransactionSummaryBySecurityAndDateWithClassification(
-      toDate.toISOString().split("T")[0]
+      toDate.toISOString().split("T")[0],
     );
   const resultAfterCostCalc =
     getTransactionResultBySecurityAndDateWithClassification(transactionDetail);
@@ -24,7 +25,7 @@ export async function getSecurityDetailWithNfrsClassificationAsOnDate(
   return grouped;
 }
 export async function getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
-  toDate: Date
+  toDate: Date,
 ) {
   const data = await getSecurityDetailWithNfrsClassificationAsOnDate(toDate);
   const marketData = await getClosingPriceForSecurities(toDate, data);
@@ -59,7 +60,7 @@ export async function calculateNfrsGainForSecurityBetweenDate(
     success: boolean;
     message: string;
     data: SecurityBalanceWithClassification[];
-  }
+  },
 ): Promise<NfrsGainDetail[]> {
   //console.log("endingPortfolio", endingPortfolio);
   const purchaseTransactionSummaryBySecurity =
@@ -70,7 +71,7 @@ export async function calculateNfrsGainForSecurityBetweenDate(
   // );
   const soldTransactionSummaryBySecurity = await getSecuritiesSoldBetweenDates(
     fromDate,
-    toDate
+    toDate,
   );
   // console.log(
   //   "soldTransactionSummaryBySecurity",
@@ -87,8 +88,8 @@ export async function calculateNfrsGainForSecurityBetweenDate(
           s.securityId,
           s.securityClassificationAsPerNFRS,
         ]),
-      ].map((a) => [JSON.stringify(a), a])
-    ).values()
+      ].map((a) => [JSON.stringify(a), a]),
+    ).values(),
   );
 
   //console.log("securityListRelatedToPeriod", securityListRelatedToPeriod);
@@ -97,22 +98,22 @@ export async function calculateNfrsGainForSecurityBetweenDate(
     const beginingDetail = beginingPortfolio.data.find(
       (b) =>
         b.securityId == Number(s[0]) &&
-        b.securityClassificationAsPerNFRS == String(s[1])
+        b.securityClassificationAsPerNFRS == String(s[1]),
     );
     const purchaseDetail = purchaseTransactionSummaryBySecurity.find(
       (p) =>
         p.securityId == Number(s[0]) &&
-        p.securityClassificationAsPerNFRS == String(s[1])
+        p.securityClassificationAsPerNFRS == String(s[1]),
     );
     const soldDetail = soldTransactionSummaryBySecurity.find(
       (sd) =>
         sd.securityId == Number(s[0]) &&
-        sd.securityClassificationAsPerNFRS == String(s[1])
+        sd.securityClassificationAsPerNFRS == String(s[1]),
     );
     const closingDetail = endingPortfolio.data.find(
       (e) =>
         e.securityId == Number(s[0]) &&
-        e.securityClassificationAsPerNFRS == String(s[1])
+        e.securityClassificationAsPerNFRS == String(s[1]),
     );
     //console.log(s[0]);
     return {
@@ -138,20 +139,20 @@ export async function calculateNfrsGainForSecurityBetweenDate(
   result.forEach(
     (r) =>
       (r.gain =
-        r.soldAmount + r.closingAmount - (r.openingAmount + r.purchaseAmount))
+        r.soldAmount + r.closingAmount - (r.openingAmount + r.purchaseAmount)),
   );
   //console.log(result);
   return result;
 }
 export async function calculateNfrsGainForSecurityAsOnDate(
   fromDate: Date,
-  toDate: Date
+  toDate: Date,
 ): Promise<NfrsGainDetail[]> {
   const openingBalanceDate = new Date(fromDate.getTime() - 24 * 60 * 60 * 1000);
 
   const [beginingPortfolio, endingPortfolio] = await Promise.all([
     getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(
-      openingBalanceDate
+      openingBalanceDate,
     ),
     getSecurityDetailWithNfrsClassificationAsOnDateWithMarketData(toDate),
   ]);
@@ -162,7 +163,7 @@ export async function calculateNfrsGainForSecurityAsOnDate(
 
   const soldTransactionSummaryBySecurity = await getSecuritiesSoldBetweenDates(
     fromDate,
-    toDate
+    toDate,
   );
   // console.log(
   //   "soldTransactionSummaryBySecurity",
@@ -179,8 +180,8 @@ export async function calculateNfrsGainForSecurityAsOnDate(
           s.securityId,
           s.securityClassificationAsPerNFRS,
         ]),
-      ].map((a) => [JSON.stringify(a), a])
-    ).values()
+      ].map((a) => [JSON.stringify(a), a]),
+    ).values(),
   );
 
   //console.log("securityListRelatedToPeriod", securityListRelatedToPeriod);
@@ -189,22 +190,22 @@ export async function calculateNfrsGainForSecurityAsOnDate(
     const beginingDetail = beginingPortfolio.data.find(
       (b) =>
         b.securityId == Number(s[0]) &&
-        b.securityClassificationAsPerNFRS == String(s[1])
+        b.securityClassificationAsPerNFRS == String(s[1]),
     );
     const purchaseDetail = purchaseTransactionSummaryBySecurity.find(
       (p) =>
         p.securityId == Number(s[0]) &&
-        p.securityClassificationAsPerNFRS == String(s[1])
+        p.securityClassificationAsPerNFRS == String(s[1]),
     );
     const soldDetail = soldTransactionSummaryBySecurity.find(
       (sd) =>
         sd.securityId == Number(s[0]) &&
-        sd.securityClassificationAsPerNFRS == String(s[1])
+        sd.securityClassificationAsPerNFRS == String(s[1]),
     );
     const closingDetail = endingPortfolio.data.find(
       (e) =>
         e.securityId == Number(s[0]) &&
-        e.securityClassificationAsPerNFRS == String(s[1])
+        e.securityClassificationAsPerNFRS == String(s[1]),
     );
     //console.log(s[0]);
     return {
@@ -241,7 +242,7 @@ export async function calculateNfrsGainForSecurityAsOnDate(
 
 export async function getSecuritiesPurchasedBetweenDates(
   fromDate: Date,
-  toDate: Date
+  toDate: Date,
 ) {
   const purchaseTransactionSummaryBySecurity =
     await prisma.securityTransactionDetail.groupBy({
@@ -261,7 +262,7 @@ export async function getSecuritiesPurchasedBetweenDates(
 }
 export async function getSecuritiesSoldBetweenDates(
   fromDate: Date,
-  toDate: Date
+  toDate: Date,
 ) {
   const soldTransactionSummaryBySecurity =
     await prisma.securityTransactionDetail.groupBy({
