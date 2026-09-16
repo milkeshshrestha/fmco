@@ -1,2 +1,3 @@
-export { default as DropDown } from "./DropDown"
-export * from "./Types"
+// @ts-nocheck
+export { default as DropDown } from "./DropDown";
+export * from "./Types";

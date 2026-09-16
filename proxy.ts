@@ -16,16 +16,17 @@ import { NextRequest } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 export async function proxy(req: NextRequest) {
-  const isLoggedIn = await auth();
   const { nextUrl } = req;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
+  if (isApiAuthRoute) {
+    return;
+  }
+
+  const isLoggedIn = await auth();
   const isPublicRoute = publicRoutes.test(nextUrl.pathname);
   const isAuthRoute = authRoutes.some((authRoute) =>
     nextUrl.pathname.startsWith(authRoute),
   );
-  if (isApiAuthRoute) {
-    return;
-  }
   if (isAuthRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));

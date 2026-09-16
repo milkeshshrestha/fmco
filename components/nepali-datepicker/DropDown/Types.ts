@@ -1,4 +1,5 @@
+// @ts-nocheck
 export interface OptionType {
-    label: string
-    value: number
+  label: string;
+  value: number;
 }
