@@ -2,7 +2,6 @@ import {
   SecurityAdditionNature,
   SecurityClassificationAsPerNFRS,
 } from "@prisma/client";
-import path from "path";
 import { z } from "zod";
 
 export const SecurityTransactionDetailValidationSchema = z

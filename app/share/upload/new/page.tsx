@@ -75,7 +75,7 @@ export default function UploadForm() {
   return (
     <div className="px-4 space-y-4">
       <CardTitle>Upload Share Transaction</CardTitle>
-      <Card className="px-4">
+      <Card className="px-4 overflow-visible">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}

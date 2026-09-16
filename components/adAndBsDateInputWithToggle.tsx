@@ -6,23 +6,26 @@ import { Toggle } from "@/components/ui/toggle";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
+import { Popover } from "./ui/popover";
+import { CalendarIcon } from "lucide-react";
 
 export default function AdAndBsDateInputWithToggle(props: any) {
   const { value: initialAdDate, onChange } = props;
   const [isAdToggled, setAdToggled] = useState(true);
   const [adDate, setAdDate] = useState<string>(initialAdDate || "");
   const [bsDate, setBsDate] = useState<string>("");
-
+  const todayAD = new Date().toISOString().split("T")[0];
+  const todayBS = ADToBS(todayAD);
+  const todayBSYear = parseInt(todayBS.split("-")[0]);
   useEffect(() => {
     setBsDate(initialAdDate !== "" ? ADToBS(adDate) : "");
   }, []);
 
   const toggleClick = () => {
     if (adDate == "" && isAdToggled) {
-      const today = new Date().toISOString().split("T")[0];
-      setAdDate(today);
-      setBsDate(ADToBS(today));
-      onChange(today);
+      setAdDate(todayAD);
+      setBsDate(todayBS);
+      onChange(todayAD);
     }
     setAdToggled(!isAdToggled);
   };
@@ -33,10 +36,10 @@ export default function AdAndBsDateInputWithToggle(props: any) {
         {!isAdToggled && (
           <NepaliDatePicker
             inputClassName={cn(
-              "border-input file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-              "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-              "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive"
+              "h-7 w-full min-w-35 rounded-md border border-input bg-input/20 px-2 py-0.5 text-sm transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-xs/relaxed file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 md:text-xs/relaxed dark:bg-input/30 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
             )}
+            minYear={2080}
+            maxYear={todayBSYear}
             className="flex-1"
             onChange={(value: string) => {
               var newAdDate = BSToAD(value);
@@ -51,6 +54,8 @@ export default function AdAndBsDateInputWithToggle(props: any) {
         {isAdToggled && (
           <Input
             type="date"
+            className="min-w-35"
+            style={{ paddingRight: "30px" }}
             {...props}
             onChange={(e) => {
               var newAdDate: string =
@@ -68,7 +73,7 @@ export default function AdAndBsDateInputWithToggle(props: any) {
         <Toggle
           size={"sm"}
           variant={"outline"}
-          className="absolute right-1 top-1 h-7"
+          className="absolute right-1 top-1 h-5 w-6"
           pressed={isAdToggled}
           onPressedChange={toggleClick}
         >

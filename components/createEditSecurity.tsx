@@ -94,7 +94,9 @@ export default function CreateEditSecurity({
                       </SelectTrigger>
                       <SelectContent>
                         {Object.values(SecurityClassification).map((s) => (
-                          <SelectItem value={s}>{s}</SelectItem>
+                          <SelectItem value={s} key={s}>
+                            {s}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

@@ -16,9 +16,8 @@ import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 //import { ThemeProvider } from "@/components/next-themes";
 import { ThemeProvider } from "@wrksz/themes/next";
-import { Inter } from "next/font/google";
+import { Inter, Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {

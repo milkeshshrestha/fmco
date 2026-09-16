@@ -2,10 +2,12 @@ import { z } from "zod";
 
 export const ShareTransferFormSchema = z
   .object({
-    transferingShareholderId: z
+    transferingShareholderId: z.coerce
       .number()
       .min(1, "Select transfering shareholder"),
-    receivingShareholderId: z.number().min(1, "Select receiving shareholder"),
+    receivingShareholderId: z.coerce
+      .number()
+      .min(1, "Select receiving shareholder"),
     transferredUnitsOfShare: z.coerce
       .number()
       .min(0.01, "Invalid number of shares"),
@@ -24,5 +26,5 @@ export const ShareTransferFormSchema = z
     {
       message: "Sender and receiver cannot be same",
       path: ["receivingShareholderId"],
-    }
+    },
   );

@@ -186,15 +186,11 @@ const UploadForm = () => {
                   <LoaderCircleIcon className="animate-spin"></LoaderCircleIcon>
                 </span>
               </Button>
-              <Button
-                className=""
-                variant="secondary"
-                render={
-                  <Link href="/documents/dividend_upload_template.xlsx">
-                    Download Sample
-                  </Link>
-                }
-              ></Button>
+              <Button className="" variant="secondary">
+                <Link href="/documents/dividend_upload_template.xlsx">
+                  Download Sample
+                </Link>
+              </Button>
             </div>
           </form>
         </Form>

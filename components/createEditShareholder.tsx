@@ -28,17 +28,18 @@ import { Button } from "./ui/button";
 import saveShareholder from "@/actions/shareholder/createShareholder";
 import { Alert, AlertDescription } from "./ui/alert";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Card, CardTitle } from "./ui/card";
-import { Separator } from "./ui/separator";
+import { Card } from "./ui/card";
 
 export default function CreateEditShareholder({
   initialValues,
 }: {
   initialValues?: Shareholder;
 }) {
-  const router = useRouter();
-  const form = useForm<z.infer<typeof shareholderSchema>>({
+  const form = useForm<
+    z.input<typeof shareholderSchema>,
+    any,
+    z.output<typeof shareholderSchema>
+  >({
     resolver: zodResolver(shareholderSchema),
     defaultValues: initialValues || {
       id: undefined,

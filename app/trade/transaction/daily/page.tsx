@@ -81,26 +81,28 @@ import { saveSecurityTransaction } from "@/actions/trade/recordSecurityTransacti
 //   SecurityTransactionDetail,
 //   "securityTransactionId"
 // >;
-type SecurityTransactionDetailCustom = z.infer<
-  typeof SecurityTransactionDetailValidationSchema
->;
+
 export default function DailyTransactionPage() {
   const [transactionDate, setTransactionDate] = useState<string>(
     new Date().toISOString().split("T")[0],
   );
   const [securityList, setSecurityList] = useState<Security[]>([]);
   const [transactionData, setTransactionData] = useState<
-    SecurityTransactionDetailCustom[]
+    z.infer<typeof SecurityTransactionDetailValidationSchema>[]
   >([]);
   const [purchaseTransactionData, setPurchaseTransactionData] = useState<
-    SecurityTransactionDetailCustom[]
+    z.infer<typeof SecurityTransactionDetailValidationSchema>[]
   >([]);
   const [saleTransactionData, setSaleTransactionData] = useState<
-    SecurityTransactionDetailCustom[]
+    z.infer<typeof SecurityTransactionDetailValidationSchema>[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [securityPopoverOpen, setSecurityPopoverOpen] = useState(false);
-  const form = useForm<SecurityTransactionDetailCustom>({
+  const form = useForm<
+    z.input<typeof SecurityTransactionDetailValidationSchema>,
+    any,
+    z.output<typeof SecurityTransactionDetailValidationSchema>
+  >({
     defaultValues: {
       index: undefined,
       quantity: 0,
@@ -111,6 +113,7 @@ export default function DailyTransactionPage() {
       securityId: undefined,
       securityAdditionNature: null,
       securityClassificationAsPerNFRS: undefined,
+      transactionDate: undefined,
     },
     resolver: zodResolver(SecurityTransactionDetailValidationSchema),
   });
@@ -509,10 +512,9 @@ export default function DailyTransactionPage() {
                             open={securityPopoverOpen}
                             onOpenChange={setSecurityPopoverOpen}
                           >
-                            <PopoverTrigger className="w-full">
-                              {/* adding div is  important else dont work */}
-                              <div>
-                                {/*type button prevents form auto submt*/}
+                            <PopoverTrigger
+                              className="w-full"
+                              render={
                                 <Button
                                   type="button"
                                   variant="outline"
@@ -534,8 +536,8 @@ export default function DailyTransactionPage() {
                                     : "Select Security"}
                                   <ChevronsUpDown className="opacity-50" />
                                 </Button>
-                              </div>
-                            </PopoverTrigger>
+                              }
+                            ></PopoverTrigger>
                             <PopoverContent className=" p-0">
                               <Command>
                                 <CommandInput placeholder="Search security..." />
@@ -598,7 +600,9 @@ export default function DailyTransactionPage() {
                             <SelectContent>
                               {Object.values(SecurityAdditionNature).map(
                                 (s) => (
-                                  <SelectItem value={s}>{s}</SelectItem>
+                                  <SelectItem value={s} key={s}>
+                                    {s}
+                                  </SelectItem>
                                 ),
                               )}
                             </SelectContent>
@@ -626,7 +630,9 @@ export default function DailyTransactionPage() {
                           <SelectContent>
                             {Object.values(SecurityClassificationAsPerNFRS).map(
                               (s) => (
-                                <SelectItem value={s}>{s}</SelectItem>
+                                <SelectItem value={s} key={s}>
+                                  {s}
+                                </SelectItem>
                               ),
                             )}
                           </SelectContent>

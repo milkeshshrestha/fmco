@@ -57,7 +57,11 @@ export default function SingleDividendCreateForm() {
       //router.push("/");
     }
   };
-  const form = useForm<z.infer<typeof dividendSchema>>({
+  const form = useForm<
+    z.input<typeof dividendSchema>,
+    any,
+    z.output<typeof dividendSchema>
+  >({
     resolver: zodResolver(dividendSchema),
     defaultValues: {
       shareholderNumber: undefined,

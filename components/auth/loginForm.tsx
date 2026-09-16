@@ -120,9 +120,12 @@ export const LoginForm = () => {
         </Form>
       </div>
       <CardFooter>
-        <Button className="font-normal w-full" size="sm" asChild variant="link">
-          <Link href={"/user/create"}>Don't have an account</Link>
-        </Button>
+        <Link
+          href={"/user/create"}
+          className="w-full text-center hover:underline"
+        >
+          Don't have an account
+        </Link>
       </CardFooter>
     </Card>
   );
