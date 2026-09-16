@@ -1,13 +1,12 @@
-import { NepaliDatePicker } from "nepali-datepicker-reactjs";
-import "nepali-datepicker-reactjs/dist/index.css";
+import NepaliDatePicker from "./nepali-datepicker/NepaliDatePicker";
+//import "nepali-datepicker-reactjs/dist/index.css";
+import "./nepali-datepicker/index.css";
 import { ADToBS, BSToAD } from "bikram-sambat-js";
 import { useEffect, useState } from "react";
 import { Toggle } from "@/components/ui/toggle";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
-import { Popover } from "./ui/popover";
-import { CalendarIcon } from "lucide-react";
 
 export default function AdAndBsDateInputWithToggle(props: any) {
   const { value: initialAdDate, onChange } = props;
@@ -48,7 +47,11 @@ export default function AdAndBsDateInputWithToggle(props: any) {
               onChange(newAdDate == "" ? null : newAdDate);
             }}
             value={bsDate}
-            options={{ calenderLocale: "ne", valueLocale: "en" }}
+            options={{
+              closeOnSelect: true,
+              calenderLocale: "ne",
+              valueLocale: "en",
+            }}
           />
         )}
         {isAdToggled && (

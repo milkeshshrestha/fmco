@@ -2,7 +2,7 @@
 //this is not function but global variable
 //there is no return statement
 
-import { PrismaClient } from "./prisma/generated/client";
+import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 // globalThis
 // globalThis is a special object in JavaScript that gives access to the global scope across any environment (Node.js, browser, etc.).
